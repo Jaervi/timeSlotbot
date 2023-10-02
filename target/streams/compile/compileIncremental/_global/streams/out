@@ -1,0 +1,6 @@
+[0m[[0m[0mdebug[0m] [0m[0m[zinc] IncrementalCompile -----------[0m
+[0m[[0m[0mdebug[0m] [0m[0mIncrementalCompile.incrementalCompile[0m
+[0m[[0m[0mdebug[0m] [0m[0mprevious = Stamps for: 36 products, 13 sources, 2 libraries[0m
+[0m[[0m[0mdebug[0m] [0m[0mcurrent source = Set(${BASE}/src/main/scala/s1/telegrambots/YourBot.scala, ${BASE}/src/main/scala/s1/telegrambots/examples/GreetBot.scala, ${BASE}/src/main/scala/s1/telegrambots/examples/ReverseBot.scala, ${BASE}/src/main/scala/s1/telegrambots/advanced/AdvancedBot.scala, ${BASE}/src/main/scala/s1/telegrambots/examples/ImageBot.scala, ${BASE}/src/main/scala/s1/telegrambots/examples/AlarmBot.scala, ${BASE}/src/main/scala/s1/telegrambots/advanced/ChatBot.scala, ${BASE}/src/main/scala/package.scala, ${BASE}/src/main/scala/s1/telegrambots/examples/GreetBot2.scala, ${BASE}/src/main/scala/s1/telegrambots/BasicBot.scala, ${BASE}/src/main/scala/s1/telegrambots/ExerciseBot.scala, ${BASE}/src/main/scala/s1/telegrambots/examples/PhotoBot.scala, ${BASE}/src/main/scala/s1/telegrambots/examples/RememberBot.scala)[0m
+[0m[[0m[0mdebug[0m] [0m[0m> initialChanges = InitialChanges(Changes(added = Set(), removed = Set(), changed = Set(), unmodified = ...),Set(),Set(),API Changes: Set())[0m
+[0m[[0m[0mdebug[0m] [0m[0mNo changes[0m
