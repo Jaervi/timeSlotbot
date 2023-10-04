@@ -35,7 +35,6 @@ object ReverseBot extends App:
          * Nyt botti kutsuu funktiota nurinpäin antaen sille parametriksi lähettämäsi viestin vastaten kyseisen funktion palautuksella.
          */
         this.onUserMessageReplyString(nurinpain)
-        viestintiedot(tervehdys(s: Message))
 
         /**
          * Botin voi käynnistää /start komennolla.
