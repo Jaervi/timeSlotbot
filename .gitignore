@@ -1,1 +1,16 @@
 bot_token.txt
+.idea
+project
+target
+.metals
+.bloop
+.bsp
+.vscode
+.idea
+apiKey.txt
+
+project/bloop
+project/project
+project/target
+project/metals.sbt
+
