@@ -17,14 +17,20 @@ object FileHandler {
 
 
   @main def printCreatedEvents()=
-    val events=eventsFromICSFile("C:/Users/Jarvi/Desktop/aleksi.kuusinen03@gmail.com.ical/aleksi.kuusinen03@gmail.com.ics")
+    val events=eventsFromICSFile("C:/Users/Aleksi/Desktop/aleksi.kuusinen03@gmail.com.ical/aleksi.kuusinen03@gmail.com.ics")
     println("Event buffer size: " + events.size)
 
 
-    /*while true do
-      val input=readLine("Enter an index")
-      println(events(input.toInt).toString)
-      println("Duration: " + events(input.toInt).duration)*/
+    while true do
+      val input=readLine("Enter an index: ")
+      val e = events(input.toInt)
+      println(e.toString)
+      println("Duration: " + events(input.toInt).duration)
+      println(e.startYear)
+      println("SD: " +e.startDay)
+      println("SM: " +e.startMonth)
+      println("ED: " +e.endDay)
+      println("EM: " +e.endMonth)
 
     /*for e <- events do
       println(e.startYear)
