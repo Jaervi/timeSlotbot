@@ -86,7 +86,7 @@ object FileHandler {
             if inEvent then
               inEvent=false
               if tempBuffer.size>1 then
-                eventList+=CalendarEvent(tempBuffer(0),tempBuffer(1))
+                eventList+=CalendarEvent(tempBuffer.head,tempBuffer(1))
                 tempBuffer.clear()    //Empty the temporary storage
           }
           //If the time is a starting time and belongs to and event, insert it on index 0. File contains two syntax variations, therefore two cases
