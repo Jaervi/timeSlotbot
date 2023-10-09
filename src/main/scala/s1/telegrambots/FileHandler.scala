@@ -19,11 +19,15 @@ object FileHandler {
   @main def printCreatedEvents()=
     val events=eventsFromICSFile("C:/Users/Aleksi/Desktop/aleksi.kuusinen03@gmail.com.ical/aleksi.kuusinen03@gmail.com.ics")
     println("Event buffer size: " + events.size)
+    val c =Calendar(events,12)
+    println(s"\n Sorted calendar: \n")
+    c.sortEventsByTime
+    c.eventList.foreach(println)
 
-
-    while true do
+    /*while true do
       val input=readLine("Enter an index: ")
       val e = events(input.toInt)
+      //c.sortEventsByTime
       println(e.toString)
       println("Duration: " + events(input.toInt).duration)
       println(e.startYear)
@@ -31,7 +35,10 @@ object FileHandler {
       println("SM: " +e.startMonth)
       println("ED: " +e.endDay)
       println("EM: " +e.endMonth)
-
+      println("SHr: " +e.startHour)
+      println("EHr: " +e.endHour)
+      println("SMin: " +e.startMinute)
+      println("EMin: " +e.endMinute)*/
     /*for e <- events do
       println(e.startYear)
       println("SD: " +e.startDay)
@@ -58,7 +65,7 @@ object FileHandler {
       try
         var line = scanner.nextLine()
         //A check for avoiding index errors for glitched/otherwise incomplete lines
-        if line.split(":").size <2 then
+        if line.split(":").length <2 then
           line="NULL:NULL"
         line.split(":")(0) match
           case "BEGIN" => inEvent=true
