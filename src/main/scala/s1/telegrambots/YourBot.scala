@@ -34,8 +34,10 @@ object YourBot extends App:
         def printfile(msg: Message): String =
             FilePreprocessor.getFile(msg.from.get.id) match
                 case Some(file) =>
-                    println(file.getPath)
-                    file.getPath
+                    val cal = Calendar(FileHandler.eventsFromICSFile(file), 1)
+                    cal.sortEventsByStartTime()
+                    cal.printList()
+                    "yes file :)"
                 case None =>
                     println("no file :(")
                     "no file :("
@@ -48,6 +50,7 @@ object YourBot extends App:
             isWaitingForMessage = true
             msg.from match
                 case Some(value) => val userid: Long = msg.from.get.id
+                case None =>
             "enter time"
 
 
