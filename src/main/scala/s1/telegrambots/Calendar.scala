@@ -6,6 +6,7 @@ import java.util.Date
 import java.time.LocalDate
 import scala.collection.mutable.Buffer
 
+// TODO: Make code clearer and improve commenting.
 class Calendar(events:Buffer[CalendarEvent], val timeCreated:Int):
 
   var eventList=events
