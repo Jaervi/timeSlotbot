@@ -134,7 +134,9 @@ class BasicBot extends TelegramBot with Polling with Commands[Future] with Callb
     def onUserMessage(action: Message => Unit)   = onMessage {
         implicit msg => 
             val msgString =  msg.text.mkString
-            if msgString.length > 0 && msgString(0) != '/' then
+            if msgString.nonEmpty && msgString(0) != '/' then
+                Future(action(msg))
+            else if (msg.document.isDefined) then
                 Future(action(msg))
             else
                 Future(println("a command found"))
