@@ -21,6 +21,7 @@ object YourBot extends App:
         onUserCommand("help", help)
         onUserCommand("When", when)
 
+<<<<<<< HEAD
         def when(msg: Message) =
             writeMessage("Give first date", getChatId(msg))
             isWaitingForMessage = true
@@ -29,6 +30,20 @@ object YourBot extends App:
             isWaitingForMessage = true
             var endTime = msg.text
             s"Startingtime set as: ${startingTime.getOrElse("")} Endtime set: ${endTime.getOrElse("")}"
+=======
+        def printfile(msg: Message): String =
+            FilePreprocessor.getFile(msg.from.get.id) match
+                case Some(file) =>
+                    println(file.getPath)
+                    file.getPath
+                case None =>
+                    println("no file :(")
+                    "no file :("
+
+        this.onUserCommand("file", printfile)
+
+        /* erkalle
+>>>>>>> refs/remotes/origin/main
 
         var isWaitingForMessage = false
 

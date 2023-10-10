@@ -4,13 +4,15 @@ DTSTART:20180816T080000Z
 DTEND:20180816T090000Z
  */
 
-class CalendarEvent (val startTime:String,val endTime:String):
+class CalendarEvent (var startTime:String,var endTime:String):
   
 
   def duration:Int=
     (endYear-startYear)*525600+(endMonth-startMonth)*43200+(endDay-startDay)*1440+(endHour-startHour)*60+(endMinute-startMinute)
   def startTimeInMinutes: Int=
     startYear*525600+startMonth*43200+startDay*1440+startHour*60+startMinute
+  def endTimeInMinutes: Int=
+    endYear*525600+endMonth*43200+endDay*1440+endHour*60+endMinute
     
   def startYear:Int=startTime.substring(0,4).toInt
   def startMonth:Int=startTime.substring(4,6).toInt
@@ -41,16 +43,23 @@ class CalendarEvent (val startTime:String,val endTime:String):
 
   //returns true also for starting at the same time
   def startsEarlierThan(event:CalendarEvent)=
-    this.startYear <= event.startYear && this.startMonth <= event.startMonth && this.startDay<= event.startDay && this.startHour<= event.startHour && this.startMinute <= event.startMinute
-
+    this.startTimeInMinutes<=event.startTimeInMinutes
   //returns true also for ending at the same time
   def endsLaterThan(event:CalendarEvent)=
-    this.endYear >= event.endYear && this.endMonth >= event.endMonth && this.endDay>= event.endDay && this.endHour>= event.endHour && this.endMinute >= event.endMinute
+    this.endTimeInMinutes>=event.endTimeInMinutes
 
+  def endsDuring(event:CalendarEvent)=
+    event.startTimeInMinutes < this.endTimeInMinutes && this.endTimeInMinutes<event.endTimeInMinutes
+
+  def startsDuring(event: CalendarEvent)=
+    this.startTimeInMinutes > event.startTimeInMinutes && this.startTimeInMinutes<event.endTimeInMinutes
   
-  //returns true if event starts after and ends before another event
-  def isInside(event:CalendarEvent)=
+  //returns true if event starts after another event starts and also ends before another event ends
+  def covers(event:CalendarEvent)=
     this.startsEarlierThan(event) && this.endsLaterThan(event)
+
+  def existsDuring(event: CalendarEvent)=
+    this.endsDuring(event)|| this.startsDuring(event)
 
   override def toString= startTime + endTime
 
