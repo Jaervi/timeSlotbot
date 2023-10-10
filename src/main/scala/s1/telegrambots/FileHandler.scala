@@ -7,8 +7,8 @@ import scala.io.StdIn.readLine
 
 //DTSTART:
 //DTEND:
-//DTSTART;VALUE=DATE:
-//DTEND;VALUE=DATE:
+//DTSTART;VALUE=DATE
+//DTEND;VALUE=DATE
 //BEGIN:VEVENT
 //END:VEVENT
 
@@ -17,13 +17,25 @@ object FileHandler {
 
 
   @main def printCreatedEvents()=
-    println("Test method not initialized")
-    /*val events=eventsFromICSFile("C:/Users/Aleksi/Desktop/aleksi.kuusinen03@gmail.com.ical/aleksi.kuusinen03@gmail.com.ics")
+    val events=eventsFromICSFile(File("C:/Users/Jarvi/Desktop/aleksi.kuusinen03@gmail.com.ical/aleksi.kuusinen03@gmail.com.ics/"))
+    val sevents=eventsFromICSFile(File("C:/Users/Jarvi/Desktop/aleksi.kuusinen03@gmail.com.ical/74e92f28-ed72-451d-9185-3874c05029e2.ics"))
     println("Event buffer size: " + events.size)
+    println("School event buffer size: " + sevents.size)
     val c =Calendar(events,12)
-    println(s"\n Sorted calendar: \n")
+    val d =Calendar(sevents,12)
+    val f=c.fuseTwoCalendars(d)
+    println("FUSED CALENDARS")
+
+    f.sortEventsByStartTime()
+    f.printList()
+    /*println(s"\n Sorted calendars: \n")
+    println("1. :")
     c.sortEventsByStartTime()
-    c.eventList.foreach(println)*/
+    c.printList()
+    println("2. :")
+    d.sortEventsByStartTime()
+    d.printList()*/
+
 
     /*while true do
       val input=readLine("Enter an index: ")
@@ -49,8 +61,8 @@ object FileHandler {
 
   /**
    * Creates a Buffer containing all the events from the specified .ics-file. Events are stored in CalendarEvent format in the Buffer.
-   * @param filePath The .ics-file which contains event data.
-   * @return Returns a Buffer[CalendarEvent] object which contains all events from the file.
+   * @param file The .ics-file which contains event data.
+   * @return a Buffer[CalendarEvent] object which contains all events from the file.
    */
   def eventsFromICSFile(file:File)=
     //Creating variables for file-reading
@@ -74,7 +86,7 @@ object FileHandler {
             if inEvent then
               inEvent=false
               if tempBuffer.size>1 then
-                eventList+=CalendarEvent(tempBuffer(0),tempBuffer(1))
+                eventList+=CalendarEvent(tempBuffer.head,tempBuffer(1))
                 tempBuffer.clear()    //Empty the temporary storage
           }
           //If the time is a starting time and belongs to and event, insert it on index 0. File contains two syntax variations, therefore two cases
@@ -82,23 +94,67 @@ object FileHandler {
             if inEvent then
               tempBuffer.insert(0,line.split(":")(1))
           }
-          case "DTSTART;VALUE=DATE" =>{
+          /*case "DTSTART;VALUE=DATE" =>{
             if inEvent then
               tempBuffer.insert(0,line.split(":")(1))
-          }
+          }*/
           //If the time is an ending time and belongs to and event, insert it on index 1. File contains two syntax variations, therefore two cases
           case "DTEND" =>{
             if inEvent then
               tempBuffer.insert(1,line.split(":")(1))
           }
-          case "DTEND;VALUE=DATE" =>{
+          //Certain files have a syntax with a start time and duration. A case for calculating the ending time for that alternative
+          case "DURATION" =>{
+            if inEvent then
+              var startHour=tempBuffer.head.substring(9,11).toInt
+              var startMin=tempBuffer.head.substring(11,13).toInt
+              var tempString = line.split(":")(1).substring(2,line.split(":")(1).length)
+              tempString=tempString.substring(0,tempString.length-1)
+              val hourAndMin=tempString.split("H")
+              if hourAndMin.size>1 then
+                startHour+=hourAndMin(0).toInt+(hourAndMin(1).toInt+startMin)/60
+                startMin=(hourAndMin(1).toInt+startMin)%60
+              else
+                startHour+=hourAndMin(0).toInt
+              var startHourString=""
+              var startMinString=""
+              if startHour<10 then
+                startHourString = s"0$startHour"
+              else
+                startHourString = s"$startHour"
+              if startMin<10 then
+                startMinString = s"0$startMin"
+              else
+                startMinString = s"$startMin"
+              val returnString=s"${tempBuffer.head.substring(0,9)}${startHourString}${startMinString}00Z"
+              tempBuffer.insert(1,returnString)
+
+          }
+
+          /*case "DTEND;VALUE=DATE" =>{
             if inEvent then
               tempBuffer.insert(1,line.split(":")(1))
-          }
+          }*/
           case _ =>
       catch
         case e: Exception => {
           e.printStackTrace()
         }
     eventList
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }
