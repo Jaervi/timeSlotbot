@@ -86,6 +86,7 @@ object FilePreprocessor {
         if filepathBuffer.isEmpty then
           None
         else
+          println("ollaan täällä")
           fuseFiles(userid, filepathBuffer)
       case None => None
   end getFile
@@ -97,7 +98,7 @@ object FilePreprocessor {
    */
   private def fuseFiles(userid: Long, filepathBuffer: Buffer[String]): Option[File] =
     // Create new file by user id
-    var outputFile: File = new File(s"Calendars/${userid.toString}.ICS")
+    var outputFile: File = new File(s"${userid.toString}.ICS")
     var outputStream: FileWriter = new FileWriter(outputFile)
 
     var isFirst: Boolean = true // Is current file the first acceptable file in filepathBuffer?
@@ -149,7 +150,7 @@ object FilePreprocessor {
 
     // If isFirst is true, that means no acceptable files were successfully merged and the created file is empty
     if (isFirst)
-      None
+      Some(outputFile)
     else
       Some(outputFile)
   end fuseFiles

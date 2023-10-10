@@ -16,40 +16,67 @@ object YourBot extends App:
 
         var userCalendars = new mutable.HashMap()
 
-        /**
-         * TODO: Luokaa bottinne tähän metodeineen ja reagoijineen.
-         */
-
         this.onUserMessage(FilePreprocessor.getFilepathsFromMessage)
+        this.onUserCommand("time", replycom)
+        onUserCommand("help", help)
+        onUserCommand("When", when)
+
+        def when(msg: Message) =
+            writeMessage("Give first date", getChatId(msg))
+            isWaitingForMessage = true
+            var startingTime = msg.text
+            writeMessage("give end date", getChatId(msg))
+            isWaitingForMessage = true
+            var endTime = msg.text
+            s"Startingtime set as: ${startingTime.getOrElse("")} Endtime set: ${endTime.getOrElse("")}"
+
 
         def printfile(msg: Message): String =
             FilePreprocessor.getFile(msg.from.get.id) match
                 case Some(file) =>
-                    println(file.getPath)
-                    file.getPath
+                    val cal = Calendar(FileHandler.eventsFromICSFile(file), 1)
+                    cal.sortEventsByStartTime()
+                    cal.printList()
+                    "yes file :)"
                 case None =>
                     println("no file :(")
                     "no file :("
 
         this.onUserCommand("file", printfile)
 
-        /* erkalle
-
         var isWaitingForMessage = false
 
         def replycom(msg: Message) =
             isWaitingForMessage = true
-            val userid: Long = msg.from.get.id
-            "etner time"
+            msg.from match
+                case Some(value) => val userid: Long = msg.from.get.id
+                case None =>
+            "enter time"
 
-        this.onUserCommand("time", replycom)
+
+/*
+        def alku(s: Message)=
+            var chatID = getChatId(s)
+            var userId = s.from.get.id
+            s"Mukava kun käytät bottia $chatID $userId"
+        end alku
+*/
+
 
         def mes(msg: Message) =
             if (isWaitingForMessage)
                 println(msg.text)
 
         this.onUserMessage(mes)
-        tähän asti */
+
+
+        def help(s: Message) =
+            "I'm a bot that an help you manage meeting times with your friends.\n " +
+              "Start the bot with command /start" +
+              "Here are the commands: \n " +
+              "/time - determines the meeting duration \n" +
+              "/help - takes you here \n"
+
 
         this.run()
         // Tarkistetaan, että lähti käyntiin
