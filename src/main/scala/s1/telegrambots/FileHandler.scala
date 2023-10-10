@@ -73,7 +73,7 @@ object FileHandler {
     val scanner = Scanner(file)
     //Creating two lists, eventList being the list which is updated and eventually given as the return parameter. TempBuffer serves as a temporary storage for each iteration.
     var eventList=Buffer[CalendarEvent]()
-    var tempBuffer=Buffer[String]()
+    var tempBuffer=Buffer[String]("","")
     //A boolean variable for extracting information only from events
     var inEvent = false
 
@@ -84,18 +84,20 @@ object FileHandler {
         if line.split(":").length <2 then
           line="NULL:NULL"
         line.split(":")(0) match
-          case "BEGIN" => inEvent=true
+          case "BEGIN" =>
+            if (line.split(":")(1).contains("VEVENT")) then
+              inEvent = true
           case "END" => {
-            if inEvent then
+            if (line.split(":")(1).contains("VEVENT")) && inEvent then
               inEvent=false
-              if tempBuffer.size>1 then
+              if tempBuffer(0) != "" then
                 eventList+=CalendarEvent(tempBuffer.head,tempBuffer(1))
-                tempBuffer.clear()    //Empty the temporary storage
+                tempBuffer = Buffer("","")    //Empty the temporary storage
           }
           //If the time is a starting time and belongs to and event, insert it on index 0. File contains two syntax variations, therefore two cases
           case "DTSTART"  =>{
             if inEvent then
-              tempBuffer.insert(0,line.split(":")(1))
+              tempBuffer(0) = (line.split(":")(1))
           }
           /*case "DTSTART;VALUE=DATE" =>{
             if inEvent then
@@ -104,7 +106,7 @@ object FileHandler {
           //If the time is an ending time and belongs to and event, insert it on index 1. File contains two syntax variations, therefore two cases
           case "DTEND" =>{
             if inEvent then
-              tempBuffer.insert(1,line.split(":")(1))
+              tempBuffer(1) = (line.split(":")(1))
           }
           //Certain files have a syntax with a start time and duration. A case for calculating the ending time for that alternative
           case "DURATION" =>{
@@ -130,7 +132,7 @@ object FileHandler {
               else
                 startMinString = s"$startMin"
               val returnString=s"${tempBuffer.head.substring(0,9)}${startHourString}${startMinString}00Z"
-              tempBuffer.insert(1,returnString)
+              tempBuffer(1) = (returnString)
 
           }
 
@@ -139,6 +141,10 @@ object FileHandler {
               tempBuffer.insert(1,line.split(":")(1))
           }*/
           case _ =>
+            if (line.split(":")(0).contains("DTSTART")) && inEvent then
+              tempBuffer(0) = (line.split(":")(1))
+            else if (line.split(":")(0).contains("DTEND")) && inEvent then
+              tempBuffer(1) = (line.split(":")(1))
       catch
         case e: Exception => {
           e.printStackTrace()
