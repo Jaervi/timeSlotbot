@@ -7,8 +7,8 @@ import scala.io.StdIn.readLine
 
 //DTSTART:
 //DTEND:
-//DTSTART;VALUE=DATE
-//DTEND;VALUE=DATE
+//DTSTART;VALUE=DATE:
+//DTEND;VALUE=DATE:
 //BEGIN:VEVENT
 //END:VEVENT
 
@@ -17,12 +17,13 @@ object FileHandler {
 
 
   @main def printCreatedEvents()=
-    val events=eventsFromICSFile("C:/Users/Aleksi/Desktop/aleksi.kuusinen03@gmail.com.ical/aleksi.kuusinen03@gmail.com.ics")
+    println("Test method not initialized")
+    /*val events=eventsFromICSFile("C:/Users/Aleksi/Desktop/aleksi.kuusinen03@gmail.com.ical/aleksi.kuusinen03@gmail.com.ics")
     println("Event buffer size: " + events.size)
     val c =Calendar(events,12)
     println(s"\n Sorted calendar: \n")
-    c.sortEventsByTime
-    c.eventList.foreach(println)
+    c.sortEventsByStartTime()
+    c.eventList.foreach(println)*/
 
     /*while true do
       val input=readLine("Enter an index: ")
@@ -51,9 +52,9 @@ object FileHandler {
    * @param filePath The .ics-file which contains event data.
    * @return Returns a Buffer[CalendarEvent] object which contains all events from the file.
    */
-  def eventsFromICSFile(filePath:String)=
+  def eventsFromICSFile(file:File)=
     //Creating variables for file-reading
-    val file = File(filePath)
+    //val file = File(filePath)
     val scanner = Scanner(file)
     //Creating two lists, eventList being the list which is updated and eventually given as the return parameter. TempBuffer serves as a temporary storage for each iteration.
     var eventList=Buffer[CalendarEvent]()
@@ -100,20 +101,4 @@ object FileHandler {
           e.printStackTrace()
         }
     eventList
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 }

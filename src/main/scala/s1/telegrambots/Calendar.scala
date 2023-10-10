@@ -7,7 +7,7 @@ class Calendar(events:Buffer[CalendarEvent], val timeCreated:Int):
   var eventList=events
 
 
-  def sortEventsByStartTime=
+  def sortEventsByStartTime()=
     eventList=eventList.sortBy(_.startTimeInMinutes)
 
-  def printList=eventList.foreach(println)
+  def printList()=eventList.foreach(println)
