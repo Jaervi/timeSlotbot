@@ -8,6 +8,7 @@ target
 .vscode
 .idea
 apiKey.txt
+Calendars
 
 project/bloop
 project/project
