@@ -51,4 +51,3 @@ class Calendar(events:Buffer[CalendarEvent], val timeCreated:Int):
     Calendar(newEventBuffer,timeCreated)
 
 
-

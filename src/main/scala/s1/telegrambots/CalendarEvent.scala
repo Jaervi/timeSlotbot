@@ -56,7 +56,7 @@ class CalendarEvent (var startTime:String,var endTime:String):
   def startsDuring(event: CalendarEvent)=
     this.startTimeInMinutes > event.startTimeInMinutes && this.startTimeInMinutes<event.endTimeInMinutes
   
-  //returns true if event starts after another event starts and also ends before another event ends
+  //returns true if event starts after another event starts and also ends before the another event ends
   def covers(event:CalendarEvent)=
     this.startsEarlierThan(event) && this.endsLaterThan(event)
 
