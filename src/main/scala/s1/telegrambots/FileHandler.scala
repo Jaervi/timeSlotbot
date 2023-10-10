@@ -19,12 +19,11 @@ object FileHandler {
   @main def printCreatedEvents()=
     val events=eventsFromICSFile(File("C:/Users/Jarvi/Desktop/aleksi.kuusinen03@gmail.com.ical/aleksi.kuusinen03@gmail.com.ics/"))
     val sevents=eventsFromICSFile(File("C:/Users/Jarvi/Desktop/aleksi.kuusinen03@gmail.com.ical/74e92f28-ed72-451d-9185-3874c05029e2.ics"))
-    refs/remotes/origin/main
     println("Event buffer size: " + events.size)
     println("School event buffer size: " + sevents.size)
     val c =Calendar(events,12)
     println(s"\n Sorted calendar: \n")
-    c.sortEventsByStartTime
+    c.sortEventsByStartTime()
     c.eventList.foreach(println)
 
     val d =Calendar(sevents,12)
@@ -41,8 +40,6 @@ object FileHandler {
     d.sortEventsByStartTime()
     d.printList()*/
 
-
-      refs/remotes/origin/main
     /*while true do
       val input=readLine("Enter an index: ")
       val e = events(input.toInt)
