@@ -22,6 +22,17 @@ object YourBot extends App:
 
         this.onUserMessage(FilePreprocessor.getFilepathsFromMessage)
 
+        def printfile(msg: Message): String =
+            FilePreprocessor.getFile(msg.from.get.id) match
+                case Some(file) =>
+                    println(file.getPath)
+                    file.getPath
+                case None =>
+                    println("no file :(")
+                    "no file :("
+
+        this.onUserCommand("file", printfile)
+
         /* erkalle
 
         var isWaitingForMessage = false
