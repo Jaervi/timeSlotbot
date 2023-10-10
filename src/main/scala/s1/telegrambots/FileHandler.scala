@@ -24,14 +24,21 @@ object FileHandler {
     val c =Calendar(events,12)
     println(s"\n Sorted calendar: \n")
     c.sortEventsByStartTime()
-    c.eventList.foreach(println)
+    c.removeDayEvents()
 
     val d =Calendar(sevents,12)
-    val f=c.fuseTwoCalendars(d)
     println("FUSED CALENDARS")
+    val g=d.fuseTwoCalendars(c)
+    g.sortEventsByStartTime()
+    g.printList()
+    g.addNightLimits(22,8,60)
+    println("FUSED CALENDARS WITH EMPTY SLOTS")
+    val h=g.fetchEmptySlots(g,60,21)
+    h.printList()
 
-    f.sortEventsByStartTime()
-    f.printList()
+
+    //f.sortEventsByStartTime()
+    //f.printList()
     /*println(s"\n Sorted calendars: \n")
     println("1. :")
     c.sortEventsByStartTime()
@@ -90,7 +97,7 @@ object FileHandler {
           case "END" => {
             if (line.split(":")(1).contains("VEVENT")) && inEvent then
               inEvent=false
-              if tempBuffer(0) != "" then
+              if tempBuffer(0) != "" && tempBuffer(1) != "" then
                 eventList+=CalendarEvent(tempBuffer.head,tempBuffer(1))
                 tempBuffer = Buffer("","")    //Empty the temporary storage
           }
