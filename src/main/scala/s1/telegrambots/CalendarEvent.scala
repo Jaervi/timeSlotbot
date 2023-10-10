@@ -1,6 +1,4 @@
 package s1.telegrambots
-
-
 /*
 DTSTART:20180816T080000Z
 DTEND:20180816T090000Z
