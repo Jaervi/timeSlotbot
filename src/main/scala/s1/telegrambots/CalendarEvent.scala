@@ -57,7 +57,7 @@ class CalendarEvent (var startTime:String,var endTime:String):
   
   //returns true if specified event starts after this event starts and also ends before this event ends ie. this event covers all of the specified event
   def covers(event:CalendarEvent)=
-    this.startsEarlierThan(event) && this.endsLaterThan(event)
+    this.startTimeInMinutes<event.startTimeInMinutes && this.endTimeInMinutes>event.endTimeInMinutes
   //returns true if two events "overlap" ie. exist at the same time even for a moment
   def existsDuring(event: CalendarEvent)=
     this.endsDuring(event)|| this.startsDuring(event)

@@ -25,6 +25,12 @@ class Calendar(events:Buffer[CalendarEvent], val timeCreated:Int):
     eventList=eventList.filter(_.startTimeInMinutes<=currentTimeInMinutes+days*1440)
   def removeDayEvents()=
     eventList=eventList.filter(_.startTime.length>8)
+  def removeCoveredEvents()=
+    val tempBuffer = Buffer[CalendarEvent]()
+    for event <- eventList do 
+      if eventList.forall(!_.covers(event)) then
+        tempBuffer.append(event)
+    eventList=tempBuffer
 
   //Prints the entire event list
   def printList()=eventList.foreach(println)
@@ -64,9 +70,11 @@ class Calendar(events:Buffer[CalendarEvent], val timeCreated:Int):
     calendar.sortEventsByStartTime()
     calendar.limitEventsByDays(dayLimit)
     val eventBuffer=calendar.eventList
-    for i <- 0 until eventBuffer.size-1 do
-      if (eventBuffer(i+1).startTimeInMinutes-eventBuffer(i).endTimeInMinutes >=slotLength) then
-        emptySlotBuffer.append(CalendarEvent(eventBuffer(i).endTime,eventBuffer(i+1).startTime))
+    if (eventBuffer(1).startTimeInMinutes-eventBuffer(0).endTimeInMinutes >=slotLength) then
+      emptySlotBuffer.append(CalendarEvent(eventBuffer(0).endTime,eventBuffer(1).startTime))
+    for i <- 2 until eventBuffer.size do
+      if (eventBuffer(i).startTimeInMinutes-eventBuffer(i-1).endTimeInMinutes >=slotLength) && !eventBuffer(i-2).covers(eventBuffer(i-1)) then
+        emptySlotBuffer.append(CalendarEvent(eventBuffer(i-1).endTime,eventBuffer(i).startTime))
     Calendar(emptySlotBuffer,12)
 
   //Adds an event to the calendar. Used for manual event creation
