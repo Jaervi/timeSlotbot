@@ -81,14 +81,34 @@ object FilePreprocessor {
    * @return File wrapped in Option. None if user hasn't sent any files
    */
   def getFile(userid: Long): Option[File] =
-    filepathBufferMap.get(userid) match
-      case Some(filepathBuffer) =>
-        if filepathBuffer.isEmpty then
-          None
-        else
-          println("ollaan täällä")
-          fuseFiles(userid, filepathBuffer)
-      case None => None
+    // Case 1. There are new files waiting in filepathBuffermap
+    if (filepathBufferMap.contains(userid)) then
+      if (filepathBufferMap(userid).nonEmpty) then
+        val fileopt: Option[File] = fuseFiles(userid, filepathBufferMap(userid))
+        // Were files of acceptable type; if not, we will continue further
+        if fileopt.isDefined then
+          filepathBufferMap.remove(userid)
+          return fileopt
+        end if
+      end if
+      // This user has been processed from filepathBufferMap
+      filepathBufferMap.remove(userid)
+    end if
+
+    // Case 2. There are no new/acceptable files waiting in filepathBuffermap; lets check if there is a previous file
+    var file = File(s"${System.getProperty("user.dir")}${File.separator}Calendars${File.separator}${userid.toString}.ICS")
+    val threeDays: Long = 259200000
+    if (file.exists()) then
+      if (file.lastModified() > (java.util.Calendar.getInstance().getTimeInMillis - threeDays)) then
+        Some(file)
+      else
+        None
+      end if
+    // Case 3. There are no new files waiting in filepathBuffermap and there is no existing file in Calendars
+    else
+      None
+
+
   end getFile
 
   /**
@@ -97,11 +117,12 @@ object FilePreprocessor {
    * @return Fused file wrapped in option. None if none of the files specified in filepathBuffer is of acceptable type
    */
   private def fuseFiles(userid: Long, filepathBuffer: Buffer[String]): Option[File] =
-    // Create new file by user id
-    var outputFile: File = new File(s"${userid.toString}.ICS")
+    // Create new file by user id to Calendars folder in project directory, and name the file <userid>.ICS
+    var outputFile: File = new File(s"${System.getProperty("user.dir")}${File.separator}Calendars${File.separator}${userid.toString}.ICS")
     var outputStream: FileWriter = new FileWriter(outputFile)
 
     var isFirst: Boolean = true // Is current file the first acceptable file in filepathBuffer?
+    // Lets try to parse a ICS file from each filepath
     for (i <- filepathBuffer.indices)
       try
         // Open file stream via URL, catch possible errors
