@@ -15,21 +15,29 @@ object YourBot extends App:
     object Bot extends BasicBot:
 
         var userCalendars = new mutable.HashMap()
+        var isWaitingForMessage = false
 
         this.onUserMessage(FilePreprocessor.getFilepathsFromMessage)
         this.onUserCommand("time", replycom)
         onUserCommand("help", help)
-        onUserCommand("When", when)
+        //onUserCommand("When", )
+        onUserCommandWithArguments("When", vhen)
+
+        def vhen(msg: Seq[String]) =
+            var startingTime = msg.head
+            var endTime = msg(1)
+            s"Startingtime set as: ${startingTime} Endtime set: ${endTime}"
 
         def when(msg: Message) =
-            isWaitingForMessage = false
+            isWaitingForMessage = true
             writeMessage("Give first date", getChatId(msg))
             isWaitingForMessage = true
-            var startingTime =  msg.text
+            var startingTime =
             writeMessage("give end date", getChatId(msg))
-            isWaitingForMessage = true
-            var endTime = msg.text
-            s"Startingtime set as: ${startingTime.getOrElse("")} Endtime set: ${endTime.getOrElse("")}"
+            isWaitingForMessage = false
+            //isWaitingForMessage = true
+            var endTime = getString(msg)
+            s"Startingtime set as: ${startingTime} Endtime set: ${endTime}"
 
 
         def printfile(msg: Message): String =
@@ -46,7 +54,7 @@ object YourBot extends App:
 
         this.onUserCommand("file", printfile)
 
-        var isWaitingForMessage = false
+
 
         def replycom(msg: Message) =
             isWaitingForMessage = true
