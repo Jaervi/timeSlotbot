@@ -18,17 +18,18 @@ object YourBot extends App:
         var isWaitingForMessage = false
 
         this.onUserMessage(FilePreprocessor.parseFilepathsFromMessage)
-        this.onUserCommand("time", replycom)
+        this.onUserCommandWithArguments("duration", replycom)
         onUserCommand("help", help)
         //onUserCommand("When", )
-        onUserCommandWithArguments("When", vhen)
+        onUserCommandWithArguments("When", when)
 
-        def vhen(msg: Seq[String]) =
+
+        def when(msg: Seq[String]) =
             var startingTime = msg.head
             var endTime = msg(1)
             s"Startingtime set as: ${startingTime} Endtime set: ${endTime}"
 
-        def when(msg: Message) =
+        /*def when(msg: Message) =
             isWaitingForMessage = true
             writeMessage("Give first date", getChatId(msg))
             isWaitingForMessage = true
@@ -37,7 +38,7 @@ object YourBot extends App:
             isWaitingForMessage = false
             //isWaitingForMessage = true
             var endTime = getString(msg)
-            s"Startingtime set as: ${startingTime} Endtime set: ${endTime}"
+            s"Startingtime set as: ${startingTime} Endtime set: ${endTime}"*/
 
 
         def printfile(msg: Message): String =
@@ -56,12 +57,11 @@ object YourBot extends App:
 
 
 
-        def replycom(msg: Message) =
-            isWaitingForMessage = true
-            msg.from match
-                case Some(value) => val userid: Long = msg.from.get.id
-                case None =>
-            "enter time"
+        def replycom(msg: Seq[String]) =
+            var duration = msg.head
+            s"meeting duration set as $duration"
+
+
 
 
         def mes(msg: Message) =
@@ -77,7 +77,7 @@ object YourBot extends App:
               "Here are the commands: \n " +
               "/when - lets user determine the possible days when the meeting will be held. \n" +
               "/help - takes you here \n" +
-              "/time - length of the meeting \n" +
+              "/duration - length of the meeting \n" +
               "/file -Just send your calendar as a .ics file to the bot privately then run this message to check that the file has been sent\n"
 
 
