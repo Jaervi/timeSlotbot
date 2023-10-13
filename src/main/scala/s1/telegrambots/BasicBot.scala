@@ -162,7 +162,7 @@ class BasicBot extends TelegramBot with Polling with Commands[Future] with Callb
       * @return
       */
 
-    def onUserCommandWithArguments(command: String, action: Seq[String] => String) = onCommand(command) { 
+    def onUserCommandWithArguments(command: String, action: Seq[String] => String) = onCommand(command) {
         implicit msg =>
             withArgs {
                 args => request(SendMessage(msg.chat.id, action(args), parseMode = Some(ParseMode.HTML))).map(_->())
@@ -176,7 +176,7 @@ class BasicBot extends TelegramBot with Polling with Commands[Future] with Callb
       * @return
       */
 
-    def onJoinMessage(action: User => String) = 
+    def onJoinMessage(action: User => String) =
         onMessage {
             implicit msg => Future {
                 for {
@@ -185,6 +185,14 @@ class BasicBot extends TelegramBot with Polling with Commands[Future] with Callb
                 } reply(action(member)).map(_ => ())
             }
         }
+
+  /**
+   * When literally anything happens on the channel
+   * @param action method that takes a message
+   */
+    def onUserExist(action: Message => Unit)   = onMessage {
+      implicit msg => Future(action(msg))
+    }
   
 
     /**
