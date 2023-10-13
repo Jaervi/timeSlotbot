@@ -18,16 +18,16 @@ object YourBot extends App:
         var isWaitingForMessage = false
 
         this.onUserMessage(FilePreprocessor.parseFilepathsFromMessage)
-        this.onUserCommandWithArguments("duration", replycom)
+        //this.onUserCommandWithArguments("duration", replycom)
         onUserCommand("help", help)
         //onUserCommand("When", )
         onUserCommandWithArguments("When", when)
 
 
         def when(msg: Seq[String]) =
-            var startingTime = msg.head
-            var endTime = msg(1)
-            s"Startingtime set as: ${startingTime} Endtime set: ${endTime}"
+            var endTime = msg.head
+            var duration = msg(1)
+            s"End time set as: ${endTime} duration set as: ${duration}"
 
         /*def when(msg: Message) =
             isWaitingForMessage = true
@@ -77,7 +77,6 @@ object YourBot extends App:
               "Here are the commands: \n " +
               "/when - lets user determine the possible days when the meeting will be held. \n" +
               "/help - takes you here \n" +
-              "/duration - length of the meeting \n" +
               "/file -Just send your calendar as a .ics file to the bot privately then run this message to check that the file has been sent\n"
 
 
