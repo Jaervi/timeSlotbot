@@ -180,4 +180,12 @@ object FilePreprocessor {
     else
       Some(outputFile)
   end fuseFiles
+
+  /**
+   * Returns amount of files that are pending for this user
+   * @param userid
+   * @return
+   */
+  def isPending(userid: Long): Int = ???
+    
 }

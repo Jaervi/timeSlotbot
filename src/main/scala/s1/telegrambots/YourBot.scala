@@ -3,18 +3,17 @@ import s1.telegrambots.BasicBot
 import s1.telegrambots.FilePreprocessor
 
 import scala.collection.mutable
-import scala.collection.mutable.Buffer
+import scala.collection.mutable.{Buffer, HashMap}
 import scala.util.Using
 import scala.io.Source
 import java.io.*
-
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
 
 object YourBot extends App:
     object Bot extends BasicBot:
 
-        var userCalendars = new mutable.HashMap()
+        var usersInGroups = new HashMap[Long,Buffer[Long]]()
         var isWaitingForMessage = false
 
         this.onUserMessage(FilePreprocessor.parseFilepathsFromMessage)
@@ -42,16 +41,17 @@ object YourBot extends App:
 
 
         def printfile(msg: Message): String =
+            //FilePreprocessor.
             FilePreprocessor.getFile(msg.from.get.id) match
                 case Some(file) =>
-                    val cal = Calendar(FileHandler.eventsFromICSFile(file), 1)
-                    cal.sortEventsByStartTime()
-                    cal.printList()
+                    //val cal = Calendar(FileHandler.eventsFromICSFile(file), 1)
+                    //cal.sortEventsByStartTime()
+                    //cal.printList()
+                    sendPhoto("nicefile.png", getChatId(msg))
                     "yes file :)"
                 case None =>
-                    println("no file :(")
                     sendPhoto("nofiles .jpg", getChatId(msg))
-                    "no file :("
+                    "No files were "
 
         this.onUserCommand("file", printfile)
 
