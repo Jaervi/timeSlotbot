@@ -183,9 +183,15 @@ object FilePreprocessor {
 
   /**
    * Returns amount of files that are pending for this user
-   * @param userid
-   * @return
+   * @param userid userid long integer
+   * @return Amount of files pending, 0 if no files but name is on list and -1 if name not on list
    */
-  def isPending(userid: Long): Int = ???
-    
+  def isPending(userid: Long): Int =
+    if (filepathBufferMap.contains(userid)) then
+      filepathBufferMap(userid).size
+    else
+      -1
+  end isPending
+
+
 }
