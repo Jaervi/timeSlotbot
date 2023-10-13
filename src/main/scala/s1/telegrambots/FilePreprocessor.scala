@@ -1,5 +1,6 @@
 package s1.telegrambots
 import com.bot4s.telegram.models.Message
+import com.bot4s.telegram.models.ChatType
 import s1.telegrambots.BasicBot
 import s1.telegrambots.YourBot.Bot.token
 import scalaj.http.Http
@@ -28,8 +29,12 @@ object FilePreprocessor {
    * valid for one hour after sending and then must be handled again.
    * @param msg Telegram message
    */
-  def getFilepathsFromMessage(msg: Message): Unit =
-    println("message received")
+  def parseFilepathsFromMessage(msg: Message): Unit =
+    // Only get filepaths from messages sent in private chats
+    if (msg.chat.`type` != ChatType.Private) then
+      return ()
+    end if
+
     var filepaths: Buffer[String] = Buffer()
     // Find sender user ID
     val sender: Long =
@@ -73,7 +78,7 @@ object FilePreprocessor {
       filepathBufferMap += (sender, filepaths)
 
     println(s"Files found: ${filepaths.toString()}")
-  end getFilepathsFromMessage
+  end parseFilepathsFromMessage
 
   /**
    * Get calendar ICS file of specific user
