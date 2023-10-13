@@ -41,7 +41,8 @@ object YourBot extends App:
 
 
         def printfile(msg: Message): String =
-            //FilePreprocessor.
+            var pendingAm = FilePreprocessor.isPending(msg.from.get.id)
+            // TODO: käyteään tätä johonki
             FilePreprocessor.getFile(msg.from.get.id) match
                 case Some(file) =>
                     //val cal = Calendar(FileHandler.eventsFromICSFile(file), 1)
@@ -54,6 +55,41 @@ object YourBot extends App:
                     "No files were "
 
         this.onUserCommand("file", printfile)
+
+        def addUserToGroupBuffer(userid: Long, groupid: Long) =
+            if (usersInGroups.contains(groupid)) then
+                if (!usersInGroups(groupid).contains(userid)) then
+                    usersInGroups(groupid) += userid
+                end if
+            end if
+        end addUserToGroupBuffer
+
+        def removeUserFromGroupBuffer(userid: Long, groupid: Long) =
+            if (usersInGroups.contains(groupid)) then
+                if (usersInGroups(groupid).contains(userid)) then
+                    usersInGroups.remove(userid)
+                end if
+            end if
+        end removeUserFromGroupBuffer
+
+        // Handle adding or removing users from group member buffer
+        def handleGroupMemberChanges(msg: Message): Unit =
+            val groupid = getChatId(msg)
+            msg.newChatMembers match
+                case Some(newMembers) =>
+                    for i <- newMembers.indices do
+                        addUserToGroupBuffer(newMembers(i).id, groupid)
+                case None =>
+            msg.from match
+                case Some(user) => if (!user.isBot) then addUserToGroupBuffer(user.id, groupid)
+                case None =>
+            msg.leftChatMember match
+                case Some(user) => removeUserFromGroupBuffer(user.id, groupid)
+                case None =>
+        end handleGroupMemberChanges
+
+        // Follow everything that happens in the server
+        onUserExist(handleGroupMemberChanges)
 
 
 
