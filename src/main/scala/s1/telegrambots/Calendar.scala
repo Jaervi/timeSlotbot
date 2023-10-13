@@ -13,7 +13,7 @@ import scala.collection.mutable.Buffer
  * @param events A Buffer containing events to be included in this calendar. The buffer is saved as a var-variable since you can add events manually afterwards.
  * @param timeCreated A simple number used for determining which of two calendars is newer or removing old calendars after a certain time period.
  */
-class Calendar(events:Buffer[CalendarEvent], val timeCreated:Int):
+class Calendar(events:Buffer[CalendarEvent], val timeCreated:Long):
 
   var eventList=events
 

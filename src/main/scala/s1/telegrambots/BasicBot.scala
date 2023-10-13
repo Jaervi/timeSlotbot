@@ -162,7 +162,7 @@ class BasicBot extends TelegramBot with Polling with Commands[Future] with Callb
       * @return
       */
 
-    def onUserCommandWithArguments(command: String, action: Seq[String] => String) = onCommand(command) { 
+    def onUserCommandWithArguments(command: String, action: Seq[String] => String) = onCommand(command) {
         implicit msg =>
             withArgs {
                 args => request(SendMessage(msg.chat.id, action(args), parseMode = Some(ParseMode.HTML))).map(_->())

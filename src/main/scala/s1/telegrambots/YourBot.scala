@@ -9,6 +9,7 @@ import scala.io.Source
 import java.io.*
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
+import java.time.LocalDate
 
 object YourBot extends App:
     object Bot extends BasicBot:
@@ -20,25 +21,37 @@ object YourBot extends App:
         //this.onUserCommandWithArguments("duration", replycom)
         onUserCommand("help", help)
         //onUserCommand("When", )
-        onUserCommandWithArguments("When", when)
+        onUserCommand("When", when)
 
 
-        def when(msg: Seq[String]) =
-            var endTime = msg.head
-            var duration = msg(1)
-            s"End time set as: ${endTime} duration set as: ${duration}"
 
-        /*def when(msg: Message) =
-            isWaitingForMessage = true
-            writeMessage("Give first date", getChatId(msg))
-            isWaitingForMessage = true
-            var startingTime =
-            writeMessage("give end date", getChatId(msg))
-            isWaitingForMessage = false
-            //isWaitingForMessage = true
-            var endTime = getString(msg)
-            s"Startingtime set as: ${startingTime} Endtime set: ${endTime}"*/
-
+        def when(msg: Message) =
+            var userBufer = usersInGroups(getChatId(msg))
+            var slotBuffer = Calendar(Buffer[CalendarEvent](), java.util.Calendar.getInstance().getTimeInMillis/1000)
+            var viesti = getString(msg)
+            var endTime = viesti.split(",")(0).toInt
+            var duration = viesti.split(",")(1).toInt
+            var muuttuja1 : File = null
+            writeMessage(s"End time set as: ${endTime} duration set as: ${duration}",getChatId(msg))
+            for id <- userBufer do
+                muuttuja1 = null
+                FilePreprocessor.getFile(id) match
+                    case Some(file) => muuttuja1 = file
+                    case None =>
+                if muuttuja1 != null then
+                    var event = Calendar(FileHandler.eventsFromICSFile(muuttuja1), java.util.Calendar.getInstance().getTimeInMillis/1000)
+                    slotBuffer = slotBuffer.fuseTwoCalendars(event)
+                    slotBuffer.removeCoveredEvents()
+            end for
+            slotBuffer.removeDayEvents()
+            slotBuffer.limitEventsByDays(endTime)
+            slotBuffer.filterForCurrentTime()
+            slotBuffer.sortEventsByStartTime()
+            slotBuffer.addNightLimits(23, 8, endTime + 2)
+            slotBuffer = slotBuffer.fetchEmptySlots(slotBuffer, duration, endTime)
+            var ajat : String = ""
+            slotBuffer.eventList.foreach(ajat += _.toString + "\n")
+            ajat
 
         def printfile(msg: Message): String =
             //FilePreprocessor.
