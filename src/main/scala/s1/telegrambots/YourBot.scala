@@ -22,9 +22,10 @@ object YourBot extends App:
         onUserCommand("When", when)
 
         def when(msg: Message) =
+            isWaitingForMessage = false
             writeMessage("Give first date", getChatId(msg))
             isWaitingForMessage = true
-            var startingTime = msg.text
+            var startingTime =  msg.text
             writeMessage("give end date", getChatId(msg))
             isWaitingForMessage = true
             var endTime = msg.text
@@ -40,6 +41,7 @@ object YourBot extends App:
                     "yes file :)"
                 case None =>
                     println("no file :(")
+                    sendPhoto("nofiles .jpg", getChatId(msg))
                     "no file :("
 
         this.onUserCommand("file", printfile)
@@ -54,15 +56,6 @@ object YourBot extends App:
             "enter time"
 
 
-/*
-        def alku(s: Message)=
-            var chatID = getChatId(s)
-            var userId = s.from.get.id
-            s"Mukava kun käytät bottia $chatID $userId"
-        end alku
-*/
-
-
         def mes(msg: Message) =
             if (isWaitingForMessage)
                 println(msg.text)
@@ -71,11 +64,14 @@ object YourBot extends App:
 
 
         def help(s: Message) =
-            "I'm a bot that an help you manage meeting times with your friends.\n " +
-              "Start the bot with command /start" +
+            "I'm a bot that helps you manage meeting times with your friends.\n " +
+              "Start the bot with command /start \n" +
               "Here are the commands: \n " +
-              "/time - determines the meeting duration \n" +
-              "/help - takes you here \n"
+              "/when - lets user determine the possible days when the meeting will be held. \n" +
+              "/help - takes you here \n" +
+              "/time - length of the meeting \n" +
+              "/file -Just send your calendar as a .ics file to the bot privately then run this message to check that the file has been sent\n"
+
 
 
         this.run()
