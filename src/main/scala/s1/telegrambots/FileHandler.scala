@@ -17,8 +17,8 @@ object FileHandler {
 
 
   @main def printCreatedEvents()=
-    val events=eventsFromICSFile(File("C:/Users/Jarvi/Desktop/aleksi.kuusinen03@gmail.com.ical/aleksi.kuusinen03@gmail.com.ics/"))
-    val sevents=eventsFromICSFile(File("C:/Users/Jarvi/Desktop/aleksi.kuusinen03@gmail.com.ical/74e92f28-ed72-451d-9185-3874c05029e2.ics"))
+    val events=eventsFromICSFile(File("C:/Users/Aleksi/Desktop/aleksi.kuusinen03@gmail.com.ical/aleksi.kuusinen03@gmail.com.ics"))
+    val sevents=eventsFromICSFile(File("C:/Users/Aleksi/Desktop/aleksi.kuusinen03@gmail.com.ical/c695ff8e-7080-4ede-b5d1-c574300db5f7.ics"))
     println("Event buffer size: " + events.size)
     println("School event buffer size: " + sevents.size)
     val c =Calendar(events,12)
@@ -27,9 +27,14 @@ object FileHandler {
     c.removeDayEvents()
 
     val d =Calendar(sevents,12)
+    d.removeDayEvents()
     println("FUSED CALENDARS")
     val g=d.fuseTwoCalendars(c)
+    g.addEvent("202310281300","202310281500")
+    g.addEvent("202310281400","202310281600")
+    g.addEvent("202310281200","202310281600")
     g.sortEventsByStartTime()
+    g.removeCoveredEvents()
     g.printList()
     g.addNightLimits(22,8,60)
     println("FUSED CALENDARS WITH EMPTY SLOTS")
