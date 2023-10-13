@@ -16,7 +16,7 @@ object YourBot extends App:
 
         var userCalendars = new mutable.HashMap()
 
-        this.onUserMessage(FilePreprocessor.getFilepathsFromMessage)
+        this.onUserMessage(FilePreprocessor.parseFilepathsFromMessage)
         this.onUserCommand("time", replycom)
         onUserCommand("help", help)
         onUserCommand("When", when)
