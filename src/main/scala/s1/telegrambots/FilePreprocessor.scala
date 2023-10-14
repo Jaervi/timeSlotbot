@@ -149,7 +149,7 @@ object FilePreprocessor {
         var line: String = ""
         var currentLine: Int = 0
         breakable {
-          while(true/*inputStream.ready()*/)
+          while(true)
             // Check if current line is null, that means end of file
             line = inputStream.readLine()
             currentLine += 1
