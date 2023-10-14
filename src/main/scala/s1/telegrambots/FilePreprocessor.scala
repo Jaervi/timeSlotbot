@@ -139,7 +139,7 @@ object FilePreprocessor {
         var isHeader: Boolean = true
         var line: String = ""
         breakable {
-          while(inputStream.ready())
+          while(true)
             // Check if current line is null, that means end of file
             line = inputStream.readLine()
             if (line == null) then break()
