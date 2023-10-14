@@ -54,7 +54,9 @@ class Calendar(events:Buffer[CalendarEvent], val timeCreated:Long):
     eventList=tempBuffer
 
   /**Prints the entire event list*/
-  def printList()=eventList.foreach(println)
+  def printList()=//eventList.foreach(println)
+    for i <- eventList.indices do
+      println(eventList(i).toString)
 
   /**Makes a combination of two different calendars into one calendar*/
   def fuseTwoCalendars(calendar:Calendar):Calendar=

@@ -27,14 +27,16 @@ object YourBot extends App:
 
 
         def when(msg: Message) =
-            println("PAASTIIN TAHANKO")
-            println(usersInGroups(getChatId(msg)).toString())
+
+            println("ollaan ttäälllä")
             var userBufer = usersInGroups(getChatId(msg))
-            println("PAASTIIN TAHAN")
-            var slotBuffer = Calendar(Buffer[CalendarEvent](), java.util.Calendar.getInstance().getTimeInMillis/1000)
+            var slotBuffer = Calendar(FileHandler.eventsFromICSFile(FilePreprocessor.getFile(userBufer(0)).get), java.util.Calendar.getInstance().getTimeInMillis/1000)
+            //var slotBuffer = Calendar(Buffer[CalendarEvent](), java.util.Calendar.getInstance().getTimeInMillis/1000)
             var viesti = getString(msg)
+            println(viesti)
             var endTime = viesti.split(",")(0).toInt
             var duration = viesti.split(",")(1).toInt
+            println(s"endtime: $endTime, duration: $duration")
             var muuttuja1 : File = null
             writeMessage(s"End time set as: ${endTime} duration set as: ${duration}",getChatId(msg))
             for id <- userBufer do
@@ -43,9 +45,18 @@ object YourBot extends App:
                     case Some(file) => muuttuja1 = file
                     case None =>
                 if muuttuja1 != null then
+                    // TODO: MITÄ TAPAHTUU???? printit hajottaa koko homman.
                     var event = Calendar(FileHandler.eventsFromICSFile(muuttuja1), java.util.Calendar.getInstance().getTimeInMillis/1000)
-                    slotBuffer = slotBuffer.fuseTwoCalendars(event)
-                    slotBuffer.removeCoveredEvents()
+                    //println("SLOTBUFFER KALENTERI ================")
+                    //slotBuffer.printList()
+                    //println("EVENT KALENTERI ================")
+                    //event.printList()
+                    slotBuffer.sortEventsByStartTime()
+                    event.sortEventsByStartTime()
+                    slotBuffer.filterForCurrentTime()
+                    event.filterForCurrentTime()
+                    slotBuffer = event.fuseTwoCalendars(slotBuffer)
+                    //slotBuffer.removeCoveredEvents()
             end for
             slotBuffer.removeDayEvents()
             slotBuffer.limitEventsByDays(endTime)
@@ -79,9 +90,9 @@ object YourBot extends App:
                     usersInGroups(groupid) += userid
                 end if
             else
+
                 usersInGroups.addOne(groupid,Buffer(userid))
             end if
-
 
 
         end addUserToGroupBuffer
