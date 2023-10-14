@@ -16,12 +16,15 @@ import sttp.client3.quick.*
 import sttp.client3.*
 
 import java.net.URL
+import java.nio.file.{Files, Paths, StandardCopyOption}
+import java.nio.file.StandardCopyOption.*
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.util.control.Breaks.{break, breakable}
 
 object FilePreprocessor {
   private var filepathBufferMap = new HashMap[Long,Buffer[String]]()
+  private var latestLog: Long = 0
 
   /**
    * Finds files from message that contain documents or links and adds them to a hashmap containing
@@ -105,8 +108,10 @@ object FilePreprocessor {
     val threeDays: Long = 259200000
     if (file.exists()) then
       if (file.lastModified() > (java.util.Calendar.getInstance().getTimeInMillis - threeDays)) then
+        latestLog = file.lastModified()
         Some(file)
       else
+        latestLog = 0
         None
       end if
     // Case 3. There are no new files waiting in filepathBuffermap and there is no existing file in Calendars
@@ -125,9 +130,11 @@ object FilePreprocessor {
    */
   private def fuseFiles(userid: Long, filepathBuffer: Buffer[String]): Option[File] =
     // Create new file by user id to Calendars folder in project directory, and name the file <userid>.ICS
-    var outputFile: File = new File(s"${System.getProperty("user.dir")}${File.separator}Calendars${File.separator}${userid.toString}.ICS")
+    // TODO: Doesnt work on LINUX
+    var outputFile: File = new File(s"${System.getProperty("user.dir")}${File.separator}Calendars${File.separator}${userid.toString}.ICSTEMP")
     var outputStream: FileWriter = new FileWriter(outputFile)
 
+    latestLog = 0
     var isFirst: Boolean = true // Is current file the first acceptable file in filepathBuffer?
     // Lets try to parse a ICS file from each filepath
     for (i <- filepathBuffer.indices)
@@ -174,7 +181,9 @@ object FilePreprocessor {
         }
         // Close file that was being read
         inputStream.close()
-        println(s"File ${filepathBuffer(i)}, $currentLine lines of text read!")
+        if (acceptableFile) then
+          println(s"File ${filepathBuffer(i)}, $currentLine lines of text read!")
+          latestLog += 1
       catch
         case error: FileNotFoundException => println(s"File ${filepathBuffer(i)} not found")
         case error: Exception => println(s"Not able to read file at ${filepathBuffer(i)}")
@@ -184,10 +193,17 @@ object FilePreprocessor {
     outputStream.close()
 
     // If isFirst is true, that means no acceptable files were successfully merged and the created file is empty
-    // For now we will still just return the empty file
+    // In that case previous sent calendar should not be replaced with the file we just created
     if (isFirst)
-      Some(outputFile)
+      outputFile.delete()
+      None
+    // Acceptable files were sent and new combined file was created: Replace previous one with that
     else
+      Files.copy(Paths.get(outputFile.getPath),
+        Paths.get(s"${System.getProperty("user.dir")}${File.separator}Calendars${File.separator}${userid.toString}.ICS"),
+        StandardCopyOption.REPLACE_EXISTING)
+      outputFile.delete()
+      outputFile = File(s"${System.getProperty("user.dir")}${File.separator}Calendars${File.separator}${userid.toString}.ICS")
       Some(outputFile)
   end fuseFiles
 
@@ -203,5 +219,12 @@ object FilePreprocessor {
       -1
   end isPending
 
+  /**
+   * Log information. Should only be called after getFile. You can check eg. if return
+   * value is over a million so you will know whether its time or amount of files.
+   * @return amount of files that were successfully converted in latest action or
+   *         date of sending of latest file if no new files were sent.
+   */
+  def getLog: Long = latestLog
 
 }

@@ -22,6 +22,10 @@ object YourBot extends App:
         onUserCommand("help", help)
         //onUserCommand("When", )
         onUserCommand("When", when)
+        onUserCommand("file", printfile)
+
+        // Follow everything that happens in the server
+        onUserExist(handleGroupMemberChanges)
 
 
 
@@ -72,20 +76,33 @@ object YourBot extends App:
          * @return Answering message about how many files were successfully read and also a meme
          */
         def printfile(msg: Message): String =
-            var pendingAm = FilePreprocessor.isPending(msg.from.get.id)
-            // TODO: käyteään tätä johonki
-            FilePreprocessor.getFile(msg.from.get.id) match
-                case Some(file) =>
-                    //val cal = Calendar(FileHandler.eventsFromICSFile(file), 1)
-                    //cal.sortEventsByStartTime()
-                    //cal.printList()
-                    sendPhoto("nicefile.png", getChatId(msg))
-                    "yes file :)"
-                case None =>
-                    sendPhoto("nofiles .jpg", getChatId(msg))
-                    "No files were "
+            var userid: Long = 0
+            msg.from match
+                case Some(user) => userid = user.id
+                case None => return "Only humans can use this command"
 
-        this.onUserCommand("file", printfile)
+            // Amount of files pending for processing
+            var pendingAm = FilePreprocessor.isPending(userid)
+            FilePreprocessor.getFile(userid) match
+                case Some(file) =>
+                    sendPhoto("nicefile.jpg", getChatId(msg))
+                    if (FilePreprocessor.getLog < 100000) then
+                        s"${FilePreprocessor.getLog} calendars successfully processed"
+                    else
+                        var ageInHours: Double = (java.util.Calendar.getInstance().getTimeInMillis - FilePreprocessor.getLog) / 3600000.0
+                        var ageInDays: Int = Math.floor(ageInHours / 24.0).toInt
+                        ageInHours = Math.floor(ageInHours % 24)
+                        if (ageInDays > 0) then
+                            s"Found calendar sent $ageInDays days and ${ageInHours.toInt} hours ago"
+                        else
+                            s"Found calendar sent ${ageInHours.toInt} hours ago"
+                case None =>
+                    sendPhoto("nofiles.jpg", getChatId(msg))
+                    if (pendingAm > 0) then "No sent calendar files found"
+                    else "No files were found."
+        end printfile
+
+
 
         def addUserToGroupBuffer(userid: Long, groupid: Long) =
             if (usersInGroups.contains(groupid)) then
@@ -94,6 +111,7 @@ object YourBot extends App:
                 end if
             else
                 usersInGroups.addOne(groupid, Buffer[Long]())
+                // TODO: tämän jälkeen vielä lisätään henkilö ryhmään
         end addUserToGroupBuffer
 
         def removeUserFromGroupBuffer(userid: Long, groupid: Long) =
@@ -120,8 +138,7 @@ object YourBot extends App:
                 case None =>
         end handleGroupMemberChanges
 
-        // Follow everything that happens in the server
-        onUserExist(handleGroupMemberChanges)
+
 
 
 
