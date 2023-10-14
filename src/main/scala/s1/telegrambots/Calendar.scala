@@ -16,15 +16,19 @@ import scala.collection.mutable.Buffer
 class Calendar(events:Buffer[CalendarEvent], val timeCreated:Long):
 
   var eventList=events
+  filterForCurrentTime()
+  sortEventsByStartTime()
+  removeDayEvents()
 
   /**
    * A simple method for getting the current time in minutes (since year 0).
+   *
    * @return The current time in minutes as Int
    */
-  private def currentTimeInMinutes={
-    (LocalDate.now().getYear)*525600+
-    (LocalDate.now().getMonthValue)*43200+(LocalDate.now().getDayOfMonth)*1440+
-    (LocalTime.now().getHour)*60+LocalTime.now().getMinute
+  private def currentTimeInMinutes: Int = {
+    (LocalDate.now().getYear) * 525600 +
+    (LocalDate.now().getMonthValue) * 43200 + (LocalDate.now().getDayOfMonth) * 1440 +
+    (LocalTime.now().getHour) * 60 + LocalTime.now().getMinute
   }
 
   //Some methods for manipulating the eventList variable. Includes methods for ordering elements and for removing unwanted elements

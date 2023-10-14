@@ -10,6 +10,7 @@ import java.io.*
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
 import java.time.LocalDate
+import java.util.concurrent.TimeUnit
 
 object YourBot extends App:
     object Bot extends BasicBot:
@@ -26,7 +27,10 @@ object YourBot extends App:
 
 
         def when(msg: Message) =
+            println("PAASTIIN TAHANKO")
+            println(usersInGroups(getChatId(msg)).toString())
             var userBufer = usersInGroups(getChatId(msg))
+            println("PAASTIIN TAHAN")
             var slotBuffer = Calendar(Buffer[CalendarEvent](), java.util.Calendar.getInstance().getTimeInMillis/1000)
             var viesti = getString(msg)
             var endTime = viesti.split(",")(0).toInt
@@ -74,7 +78,12 @@ object YourBot extends App:
                 if (!usersInGroups(groupid).contains(userid)) then
                     usersInGroups(groupid) += userid
                 end if
+            else
+                usersInGroups.addOne(groupid,Buffer(userid))
             end if
+
+
+
         end addUserToGroupBuffer
 
         def removeUserFromGroupBuffer(userid: Long, groupid: Long) =
