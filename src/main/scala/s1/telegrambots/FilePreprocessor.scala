@@ -140,10 +140,12 @@ object FilePreprocessor {
         var acceptableFile: Boolean = false
         var isHeader: Boolean = true
         var line: String = ""
+        var currentLine: Int = 0
         breakable {
-          while(inputStream.ready())
+          while(true/*inputStream.ready()*/)
             // Check if current line is null, that means end of file
             line = inputStream.readLine()
+            currentLine += 1
             if (line == null) then break()
 
              // Check if this is the first line
@@ -153,30 +155,36 @@ object FilePreprocessor {
               else
                 if (isFirst) then
                   outputStream.write(line + "\r\n")
+                end if
                 acceptableFile = true
             else
               // Everything is header before first BEGIN:VEVENT
               if (isHeader && line.contains("BEGIN:VEVENT")) then
                 isHeader = false
                 isFirst = false // End of header text has been reached
+              end if
               if (isHeader) then
                 // If this is the first document and its header, write header to file
                 if (isFirst) then
                   outputStream.write(line + "\r\n")
+                end if
               // Everything after first BEGIN:VEVENT will be written to file always
               else
                 outputStream.write(line + "\r\n")
         }
         // Close file that was being read
         inputStream.close()
+        println(s"File ${filepathBuffer(i)}, $currentLine lines of text read!")
       catch
         case error: FileNotFoundException => println(s"File ${filepathBuffer(i)} not found")
         case error: Exception => println(s"Not able to read file at ${filepathBuffer(i)}")
+    end for
 
     // Close output file
     outputStream.close()
 
     // If isFirst is true, that means no acceptable files were successfully merged and the created file is empty
+    // For now we will still just return the empty file
     if (isFirst)
       Some(outputFile)
     else

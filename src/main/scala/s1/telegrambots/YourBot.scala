@@ -66,6 +66,11 @@ object YourBot extends App:
             slotBuffer.eventList.foreach(ajat += _.toString + "\n")
             ajat
 
+        /**
+         * Logic behind /file command. Downloads and combines all sent files from this user.
+         * @param msg message of /file command
+         * @return Answering message about how many files were successfully read and also a meme
+         */
         def printfile(msg: Message): String =
             var pendingAm = FilePreprocessor.isPending(msg.from.get.id)
             // TODO: käyteään tätä johonki
