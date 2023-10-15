@@ -89,7 +89,7 @@ object FilePreprocessor {
    * @return File wrapped in Option. None if user hasn't sent any files
    */
   def getFile(userid: Long): Option[File] =
-    // Case 1. There are new files waiting in filepathBuffermap
+    /*// Case 1. There are new files waiting in filepathBuffermap
     if (filepathBufferMap.contains(userid)) then
       if (filepathBufferMap(userid).nonEmpty) then
         val fileopt: Option[File] = fuseFiles(userid, filepathBufferMap(userid))
@@ -116,7 +116,8 @@ object FilePreprocessor {
       end if
     // Case 3. There are no new files waiting in filepathBuffermap and there is no existing file in Calendars
     else
-      None
+      None*/
+    fuseFiles(userid, filepathBufferMap(userid))
 
     //fuseFiles(userid, filepathBufferMap(userid))
 
