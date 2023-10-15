@@ -9,7 +9,7 @@
 - Sends Funny Memes 
 
 
-###User use case example:
+### User use case example:
 Käyttäjä lähettää oman kalenterinsa botille yksityisviestillä. Botti vertailee ryhmän käyttäjien kalentereita ja tulostaa ryhmään kaikki mahdolliset okkousajat.
 
 - Everybody greets the bot with /start -command in group
