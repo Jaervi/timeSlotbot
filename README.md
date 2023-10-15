@@ -21,3 +21,5 @@ Käyttäjä lähettää oman kalenterinsa botille yksityisviestillä. Botti vert
 ### Plan
 Read scala doc documentation
 
+### Notice
+You need to run the program with administrator privilages
