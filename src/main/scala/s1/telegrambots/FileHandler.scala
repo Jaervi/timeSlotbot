@@ -5,74 +5,7 @@ import java.io.File
 import scala.collection.mutable.Buffer
 import scala.io.StdIn.readLine
 
-//DTSTART:
-//DTEND:
-//DTSTART;VALUE=DATE
-//DTEND;VALUE=DATE
-//BEGIN:VEVENT
-//END:VEVENT
-
-
 object FileHandler {
-
-
-  @main def printCreatedEvents()=
-    val events=eventsFromICSFile(File("C:/Users/Aleksi/Desktop/aleksi.kuusinen03@gmail.com.ical/aleksi.kuusinen03@gmail.com.ics"))
-    val sevents=eventsFromICSFile(File("C:/Users/Aleksi/Desktop/aleksi.kuusinen03@gmail.com.ical/c695ff8e-7080-4ede-b5d1-c574300db5f7.ics"))
-    println("Event buffer size: " + events.size)
-    println("School event buffer size: " + sevents.size)
-    val c =Calendar(events,12)
-    println(s"\n Sorted calendar: \n")
-    c.sortEventsByStartTime()
-    c.removeDayEvents()
-
-    val d =Calendar(sevents,12)
-    d.removeDayEvents()
-    println("FUSED CALENDARS")
-    val g=d.fuseTwoCalendars(c)
-    g.addEvent("202310281300","202310281500")
-    g.addEvent("202310281400","202310281600")
-    g.addEvent("202310281200","202310281600")
-    g.sortEventsByStartTime()
-    g.removeCoveredEvents()
-    g.printList()
-    g.addNightLimits(22,8,60)
-    println("FUSED CALENDARS WITH EMPTY SLOTS")
-    val h=g.fetchEmptySlots(g,60,21)
-    h.printList()
-
-
-    //f.sortEventsByStartTime()
-    //f.printList()
-    /*println(s"\n Sorted calendars: \n")
-    println("1. :")
-    c.sortEventsByStartTime()
-    c.printList()
-    println("2. :")
-    d.sortEventsByStartTime()
-    d.printList()*/
-
-    /*while true do
-      val input=readLine("Enter an index: ")
-      val e = events(input.toInt)
-      //c.sortEventsByTime
-      println(e.toString)
-      println("Duration: " + events(input.toInt).duration)
-      println(e.startYear)
-      println("SD: " +e.startDay)
-      println("SM: " +e.startMonth)
-      println("ED: " +e.endDay)
-      println("EM: " +e.endMonth)
-      println("SHr: " +e.startHour)
-      println("EHr: " +e.endHour)
-      println("SMin: " +e.startMinute)
-      println("EMin: " +e.endMinute)*/
-    /*for e <- events do
-      println(e.startYear)
-      println("SD: " +e.startDay)
-      println("SM: " +e.startMonth)
-      println("ED: " +e.endDay)
-      println("EM: " +e.endMonth)*/
 
   /**
    * Creates a Buffer containing all the events from the specified .ics-file. Events are stored in CalendarEvent format in the Buffer.
@@ -81,7 +14,6 @@ object FileHandler {
    */
   def eventsFromICSFile(file:File)=
     //Creating variables for file-reading
-    //val file = File(filePath)
     val scanner = Scanner(file)
     //Creating two lists, eventList being the list which is updated and eventually given as the return parameter. TempBuffer serves as a temporary storage for each iteration.
     var eventList=Buffer[CalendarEvent]()
@@ -106,16 +38,12 @@ object FileHandler {
                 eventList+=CalendarEvent(tempBuffer.head,tempBuffer(1))
                 tempBuffer = Buffer("","")    //Empty the temporary storage
           }
-          //If the time is a starting time and belongs to and event, insert it on index 0. File contains two syntax variations, therefore two cases
+          //If the time is a starting time and belongs to and event, insert it on index 0.
           case "DTSTART"  =>{
             if inEvent then
               tempBuffer(0) = (line.split(":")(1))
           }
-          /*case "DTSTART;VALUE=DATE" =>{
-            if inEvent then
-              tempBuffer.insert(0,line.split(":")(1))
-          }*/
-          //If the time is an ending time and belongs to and event, insert it on index 1. File contains two syntax variations, therefore two cases
+          //If the time is an ending time and belongs to and event, insert it on index 1.
           case "DTEND" =>{
             if inEvent then
               tempBuffer(1) = (line.split(":")(1))
@@ -147,11 +75,7 @@ object FileHandler {
               tempBuffer(1) = (returnString)
 
           }
-
-          /*case "DTEND;VALUE=DATE" =>{
-            if inEvent then
-              tempBuffer.insert(1,line.split(":")(1))
-          }*/
+          //Certain lines have a different syntax for example with a timezone. This checks for those edge cases.
           case _ =>
             if (line.split(":")(0).contains("DTSTART")) && inEvent then
               tempBuffer(0) = (line.split(":")(1))
