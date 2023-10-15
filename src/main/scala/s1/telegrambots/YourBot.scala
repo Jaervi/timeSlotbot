@@ -25,6 +25,12 @@ object YourBot extends App:
         // Follow everything that happens in the server
         onUserExist(handleGroupMemberChanges)
 
+/*
+  catch
+            //case error: Exception =>writeMessage("Couldn't process the command using these parameters. Please try again.\nUsage: /when <days>,<duration>",getChatId(msg))
+            case error: NumberFormatException => "Couldn't process the command using these parameters. Please try again.\nUsage: /when <days>,<duration>"
+ */
+
 
         /**
          * Function that gets called on /when command
@@ -35,15 +41,16 @@ object YourBot extends App:
             var userBufer = usersInGroups(getChatId(msg))
             var slotBuffer = Calendar(FileHandler.eventsFromICSFile(FilePreprocessor.getFile(userBufer(0)).get), java.util.Calendar.getInstance().getTimeInMillis/1000)
             var viesti = getString(msg)
-            var endTime: Int = 0
-            var duration: Int = 0
+            var endTime=0
+            var duration=0
             // Error handling
-            try
-                endTime = viesti.split(",")(0).toInt
-                duration = viesti.split(",")(1).toInt
-            catch
-                case error: Exception => return "Couldn't process the command using these parameters. Please try again.\nUsage: /when <days>,<duration>"
+            if !(viesti.split(",").length==2) || !isInteger(viesti.split(",")(0)) || !isInteger(viesti.split(",")(1)) then
+                return "Couldn't process the command using these parameters. Please try again.\nUsage: /when days,duration"
+            endTime = viesti.split(",")(0).toInt
+            duration = viesti.split(",")(1).toInt
 
+            if endTime<=0 || duration<=0 then
+                return "Couldn't process the command using these parameters. Please try again.\nUsage: /when days,duration"
             var muuttuja1 : File = null
             writeMessage(s"End time set as: ${endTime} duration set as: ${duration}",getChatId(msg))
             for id <- userBufer do
@@ -58,7 +65,7 @@ object YourBot extends App:
                     slotBuffer.filterForCurrentTime()
                     event.filterForCurrentTime()
                     slotBuffer = event.fuseTwoCalendars(slotBuffer)
-                    //slotBuffer.removeCoveredEvents()
+
             end for
             slotBuffer.removeDayEvents()
             slotBuffer.limitEventsByDays(endTime)
@@ -70,6 +77,19 @@ object YourBot extends App:
             slotBuffer.eventList.foreach(ajat += _.toString + "\n")
             ajat
         end when
+
+        def isInteger(s: String): Boolean =
+            try s.toInt
+            catch
+                case e: NumberFormatException =>
+                    return false
+                case e: NullPointerException =>
+                    return false
+            true
+        end isInteger
+
+
+
 
         /**
          * Logic behind /file command. Downloads and combines all sent files from this user.
