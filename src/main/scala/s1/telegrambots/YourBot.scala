@@ -19,28 +19,25 @@ object YourBot extends App:
         var isWaitingForMessage = false
 
         this.onUserMessage(FilePreprocessor.parseFilepathsFromMessage)
-        //this.onUserCommandWithArguments("duration", replycom)
         onUserCommand("help", help)
-        //onUserCommand("When", )
-        onUserCommand("When", when)
+        onUserCommand("when", when)
         onUserCommand("file", printfile)
 
         // Follow everything that happens in the server
         onUserExist(handleGroupMemberChanges)
 
 
-
+        /**
+         * Function that gets called on /when command
+         * @param msg message
+         * @return string that gets sent back as message, list of all possible timeslots
+         */
         def when(msg: Message) =
-
-            //println("ollaan ttäälllä")
             var userBufer = usersInGroups(getChatId(msg))
             var slotBuffer = Calendar(FileHandler.eventsFromICSFile(FilePreprocessor.getFile(userBufer(0)).get), java.util.Calendar.getInstance().getTimeInMillis/1000)
-            //var slotBuffer = Calendar(Buffer[CalendarEvent](), java.util.Calendar.getInstance().getTimeInMillis/1000)
             var viesti = getString(msg)
-            println(viesti)
             var endTime = viesti.split(",")(0).toInt
             var duration = viesti.split(",")(1).toInt
-            //println(s"endtime: $endTime, duration: $duration")
             var muuttuja1 : File = null
             writeMessage(s"End time set as: ${endTime} duration set as: ${duration}",getChatId(msg))
             for id <- userBufer do
@@ -49,12 +46,7 @@ object YourBot extends App:
                     case Some(file) => muuttuja1 = file
                     case None =>
                 if muuttuja1 != null then
-                    // TODO: MITÄ TAPAHTUU???? printit hajottaa koko homman.
                     var event = Calendar(FileHandler.eventsFromICSFile(muuttuja1), java.util.Calendar.getInstance().getTimeInMillis/1000)
-                    //println("SLOTBUFFER KALENTERI ================")
-                    //slotBuffer.printList()
-                    //println("EVENT KALENTERI ================")
-                    //event.printList()
                     slotBuffer.sortEventsByStartTime()
                     event.sortEventsByStartTime()
                     slotBuffer.filterForCurrentTime()
@@ -71,6 +63,7 @@ object YourBot extends App:
             var ajat : String = ""
             slotBuffer.eventList.foreach(ajat += _.toString + "\n")
             ajat
+        end when
 
         /**
          * Logic behind /file command. Downloads and combines all sent files from this user.
@@ -105,7 +98,11 @@ object YourBot extends App:
         end printfile
 
 
-
+        /**
+         * Add <userid> to <groupid> in usersIsGroup hashmap
+         * @param userid userid
+         * @param groupid groupid
+         */
         def addUserToGroupBuffer(userid: Long, groupid: Long) =
             if (usersInGroups.contains(groupid)) then
                 if (!usersInGroups(groupid).contains(userid)) then
@@ -116,6 +113,11 @@ object YourBot extends App:
             end if
         end addUserToGroupBuffer
 
+        /**
+         * Remove <userid> from <groupid> in usersIsGroup hashmap
+         * @param userid userid
+         * @param groupid groupid
+         */
         def removeUserFromGroupBuffer(userid: Long, groupid: Long) =
             if (usersInGroups.contains(groupid)) then
                 if (usersInGroups(groupid).contains(userid)) then
@@ -124,7 +126,10 @@ object YourBot extends App:
             end if
         end removeUserFromGroupBuffer
 
-        // Handle adding or removing users from group member buffer
+        /**
+         * Handle adding or removing users from group member buffer
+         * @param msg Message
+          */
         def handleGroupMemberChanges(msg: Message): Unit =
             val groupid = getChatId(msg)
             msg.newChatMembers match
@@ -139,24 +144,6 @@ object YourBot extends App:
                 case Some(user) => removeUserFromGroupBuffer(user.id, groupid)
                 case None =>
         end handleGroupMemberChanges
-
-
-
-
-
-        def replycom(msg: Seq[String]) =
-            var duration = msg.head
-            s"meeting duration set as $duration"
-
-
-
-
-        def mes(msg: Message) =
-            if (isWaitingForMessage)
-                println(msg.text)
-
-        this.onUserMessage(mes)
-
 
         def help(s: Message) =
             "I'm a bot that helps you manage meeting times with your friends.\n " +
