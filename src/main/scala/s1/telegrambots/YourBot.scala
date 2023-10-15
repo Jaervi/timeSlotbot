@@ -10,6 +10,7 @@ import java.io.*
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
 import java.time.LocalDate
+import java.util.concurrent.TimeUnit
 
 object YourBot extends App:
     object Bot extends BasicBot:
@@ -24,13 +25,21 @@ object YourBot extends App:
         onUserCommand("When", when)
         onUserCommand("file", printfile)
 
+        // Follow everything that happens in the server
+        onUserExist(handleGroupMemberChanges)
+
 
         def when(msg: Message) =
+
+            println("ollaan ttäälllä")
             var userBufer = usersInGroups(getChatId(msg))
-            var slotBuffer = Calendar(Buffer[CalendarEvent](), java.util.Calendar.getInstance().getTimeInMillis/1000)
+            var slotBuffer = Calendar(FileHandler.eventsFromICSFile(FilePreprocessor.getFile(userBufer(0)).get), java.util.Calendar.getInstance().getTimeInMillis/1000)
+            //var slotBuffer = Calendar(Buffer[CalendarEvent](), java.util.Calendar.getInstance().getTimeInMillis/1000)
             var viesti = getString(msg)
+            println(viesti)
             var endTime = viesti.split(",")(0).toInt
             var duration = viesti.split(",")(1).toInt
+            println(s"endtime: $endTime, duration: $duration")
             var muuttuja1 : File = null
             writeMessage(s"End time set as: ${endTime} duration set as: ${duration}",getChatId(msg))
             for id <- userBufer do
@@ -39,9 +48,18 @@ object YourBot extends App:
                     case Some(file) => muuttuja1 = file
                     case None =>
                 if muuttuja1 != null then
+                    // TODO: MITÄ TAPAHTUU???? printit hajottaa koko homman.
                     var event = Calendar(FileHandler.eventsFromICSFile(muuttuja1), java.util.Calendar.getInstance().getTimeInMillis/1000)
-                    slotBuffer = slotBuffer.fuseTwoCalendars(event)
-                    slotBuffer.removeCoveredEvents()
+                    //println("SLOTBUFFER KALENTERI ================")
+                    //slotBuffer.printList()
+                    //println("EVENT KALENTERI ================")
+                    //event.printList()
+                    slotBuffer.sortEventsByStartTime()
+                    event.sortEventsByStartTime()
+                    slotBuffer.filterForCurrentTime()
+                    event.filterForCurrentTime()
+                    slotBuffer = event.fuseTwoCalendars(slotBuffer)
+                    //slotBuffer.removeCoveredEvents()
             end for
             slotBuffer.removeDayEvents()
             slotBuffer.limitEventsByDays(endTime)
@@ -53,19 +71,39 @@ object YourBot extends App:
             slotBuffer.eventList.foreach(ajat += _.toString + "\n")
             ajat
 
+        /**
+         * Logic behind /file command. Downloads and combines all sent files from this user.
+         * @param msg message of /file command
+         * @return Answering message about how many files were successfully read and also a meme
+         */
         def printfile(msg: Message): String =
-            var pendingAm = FilePreprocessor.isPending(msg.from.get.id)
-            // TODO: käyteään tätä johonki
-            FilePreprocessor.getFile(msg.from.get.id) match
+
+            var userid: Long = 0
+            msg.from match
+                case Some(user) => userid = user.id
+                case None => return "Only humans can use this command"
+
+            // Amount of files pending for processing
+            var pendingAm = FilePreprocessor.isPending(userid)
+            FilePreprocessor.getFile(userid) match
                 case Some(file) =>
-                    //val cal = Calendar(FileHandler.eventsFromICSFile(file), 1)
-                    //cal.sortEventsByStartTime()
-                    //cal.printList()
-                    //sendPhoto("nicefile.png", getChatId(msg))
-                    "yes file :)"
+                    sendPhoto("nicefile.jpg", getChatId(msg))
+                    if (FilePreprocessor.getLog < 100000) then
+                        s"${FilePreprocessor.getLog} calendars successfully processed"
+                    else
+                        var ageInHours: Double = (java.util.Calendar.getInstance().getTimeInMillis - FilePreprocessor.getLog) / 3600000.0
+                        var ageInDays: Int = Math.floor(ageInHours / 24.0).toInt
+                        ageInHours = Math.floor(ageInHours % 24)
+                        if (ageInDays > 0) then
+                            s"Found calendar sent $ageInDays days and ${ageInHours.toInt} hours ago"
+                        else
+                            s"Found calendar sent ${ageInHours.toInt} hours ago"
                 case None =>
-                    //sendPhoto("nofiles .jpg", getChatId(msg))
-                    "No files were "
+                    sendPhoto("nofiles.jpg", getChatId(msg))
+                    if (pendingAm > 0) then "No sent calendar files found"
+                    else "No files were found."
+        end printfile
+
 
 
         def addUserToGroupBuffer(userid: Long, groupid: Long) =
@@ -73,6 +111,8 @@ object YourBot extends App:
                 if (!usersInGroups(groupid).contains(userid)) then
                     usersInGroups(groupid) += userid
                 end if
+            else
+                usersInGroups.addOne(groupid, Buffer[Long](userid))
             end if
         end addUserToGroupBuffer
 
@@ -100,8 +140,7 @@ object YourBot extends App:
                 case None =>
         end handleGroupMemberChanges
 
-        // Follow everything that happens in the server
-        onUserExist(handleGroupMemberChanges)
+
 
 
 

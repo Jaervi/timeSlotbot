@@ -2,9 +2,10 @@ package s1.telegrambots
 
 import java.text.SimpleDateFormat
 import java.time.*
-import java.util.Date
+import java.util.TimeZone
 import java.time.LocalDate
 import scala.collection.mutable.Buffer
+import java.time.ZonedDateTime
 
 // TODO: Make code clearer and improve commenting.
 
@@ -16,15 +17,19 @@ import scala.collection.mutable.Buffer
 class Calendar(events:Buffer[CalendarEvent], val timeCreated:Long):
 
   var eventList=events
+  filterForCurrentTime()
+  sortEventsByStartTime()
+  removeDayEvents()
 
   /**
    * A simple method for getting the current time in minutes (since year 0).
+   *
    * @return The current time in minutes as Int
    */
-  private def currentTimeInMinutes={
-    (LocalDate.now().getYear)*525600+
-    (LocalDate.now().getMonthValue)*43200+(LocalDate.now().getDayOfMonth)*1440+
-    (LocalTime.now().getHour)*60+LocalTime.now().getMinute
+  private def currentTimeInMinutes: Int = {
+    (LocalDate.now().getYear) * 525600 +
+    (LocalDate.now().getMonthValue) * 43200 + (LocalDate.now().getDayOfMonth) * 1440 +
+    (LocalTime.now().getHour) * 60 + LocalTime.now().getMinute
   }
 
   //Some methods for manipulating the eventList variable. Includes methods for ordering elements and for removing unwanted elements
@@ -49,7 +54,9 @@ class Calendar(events:Buffer[CalendarEvent], val timeCreated:Long):
     eventList=tempBuffer
 
   /**Prints the entire event list*/
-  def printList()=eventList.foreach(println)
+  def printList()=//eventList.foreach(println)
+    for i <- eventList.indices do
+      println(eventList(i).toString)
 
   /**Makes a combination of two different calendars into one calendar*/
   def fuseTwoCalendars(calendar:Calendar):Calendar=
@@ -109,17 +116,15 @@ class Calendar(events:Buffer[CalendarEvent], val timeCreated:Long):
     sortEventsByStartTime()
 
   /**
-   * Creates events to prevent night-time for showing as a free time slot. Java.util.Calendar is used to make calculating subsequent days easier
+   * Creates events during the night to prevent night-time for showing as a free time slot. Java.util.Calendar is used to make calculating subsequent days easier
    * @param eveningLimit The evening limit as Int. Empty slots do not last after this time
    * @param morningLimit The morning limit as Int. Empty slots do not start before this time
    * @param days Is used to specify the length of how many elements are created (a heuristic, can be defined as wanted)
    */
-  //
-  //Limit parameters define the evening and morning limits and parameter days is used to specify the length of how many elements are created.
-  //
   def addNightLimits(eveningLimit:Int,morningLimit:Int,days:Int)=
-    var morningString=(morningLimit-3).toString
-    var eveningString=(eveningLimit-3).toString
+    val offset = ZonedDateTime.now().getOffset.getTotalSeconds/3600
+    var morningString=(morningLimit-offset).toString
+    var eveningString=(eveningLimit-offset).toString
     if morningLimit<13 then
       morningString="0"+morningString
     if eveningLimit<13 then
@@ -133,16 +138,7 @@ class Calendar(events:Buffer[CalendarEvent], val timeCreated:Long):
       val end=s"${format.format(calendar.getTime)}${morningString}00"
       addEvent(start,end)
     sortEventsByStartTime()
-        /*if (eventBuffer(i+1).startTimeInMinutes-eventBuffer(i).endTimeInMinutes >=slotLength
-          && (eventBuffer(i).endHour*60+eventBuffer(i).endMinute <22*60-slotLength || eventBuffer(i+1).startHour*60+eventBuffer(i+1).startMinute>8*60+slotLength)) then
 
-        val beginStamp="080000Z"
-        val beginTime=8*60
-        val finalStamp="220000Z"
-        val finalTime=22*60
-        var morningTime=(LocalDate.now().getYear)*525600+(LocalDate.now().getMonthValue)*43200+(LocalDate.now().getDayOfMonth+1)*1440+morningLimit*60
-        var eveningTime=(LocalDate.now().getYear)*525600+(LocalDate.now().getMonthValue)*43200+(LocalDate.now().getDayOfMonth)*1440+eveningLimit*60*/
-        //val nextDayAtEight=(LocalDate.now().getYear)*525600+(LocalDate.now().getMonthValue)*43200+(LocalDate.now().getDayOfMonth+1)*1440+8*60
 
 
 
