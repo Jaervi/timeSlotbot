@@ -17,3 +17,7 @@ Käyttäjä lähettää oman kalenterinsa botille yksityisviestillä. Botti vert
 - Users use /file command to see if the bot has recieved their files
 - One of the users in the group sends /when \<day limit>,\<duration>
 - Bot replies with available time slots
+
+### Plan
+Read scala doc documentation
+
