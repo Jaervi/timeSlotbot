@@ -89,7 +89,7 @@ object FilePreprocessor {
    * @return File wrapped in Option. None if user hasn't sent any files
    */
   def getFile(userid: Long): Option[File] =
-    // Case 1. There are new files waiting in filepathBuffermap
+    /*// Case 1. There are new files waiting in filepathBuffermap
     if (filepathBufferMap.contains(userid)) then
       if (filepathBufferMap(userid).nonEmpty) then
         val fileopt: Option[File] = fuseFiles(userid, filepathBufferMap(userid))
@@ -116,7 +116,8 @@ object FilePreprocessor {
       end if
     // Case 3. There are no new files waiting in filepathBuffermap and there is no existing file in Calendars
     else
-      None
+      None*/
+    fuseFiles(userid, filepathBufferMap(userid))
 
     //fuseFiles(userid, filepathBufferMap(userid))
 
@@ -129,8 +130,10 @@ object FilePreprocessor {
    * @return Fused file wrapped in option. None if none of the files specified in filepathBuffer is of acceptable type
    */
   private def fuseFiles(userid: Long, filepathBuffer: Buffer[String]): Option[File] =
-    // Create new file by user id to Calendars folder in project directory, and name the file <userid>.ICS
-    // TODO: Doesnt work on LINUX
+    // Create new file by user id to Calendars folder in project directory, and name the file <userid>.ICSTEMP
+    // So this is temporary file; in end of this method, we will decide whether we will rename this file to <userid>.ICS
+    // or will we just delete this and act like nothing happened and everything is just the way it was before and everyone is happy
+    // TODO: Doesnt work on LINUX. Problem is probably System.getProperty
     var outputFile: File = new File(s"${System.getProperty("user.dir")}${File.separator}Calendars${File.separator}${userid.toString}.ICSTEMP")
     var outputStream: FileWriter = new FileWriter(outputFile)
 

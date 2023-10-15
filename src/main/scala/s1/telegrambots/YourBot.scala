@@ -29,7 +29,6 @@ object YourBot extends App:
         onUserExist(handleGroupMemberChanges)
 
 
-
         def when(msg: Message) =
 
             //println("ollaan ttäälllä")
@@ -78,6 +77,7 @@ object YourBot extends App:
          * @return Answering message about how many files were successfully read and also a meme
          */
         def printfile(msg: Message): String =
+
             var userid: Long = 0
             msg.from match
                 case Some(user) => userid = user.id
