@@ -1,13 +1,19 @@
 # timeSlotbot
 
-### To do
-- How to send calendar ics -file to bot
-- how to handle ics files
-- how to make a graphical message
-- internal logic between events (Event handler)
-- Bot replies
-- plan
-- 
+### Functionalities
+- Ability to send calendar ics -file to bot
+- Bot processes and handles ics files
+- Bot handles multiple calendars sent by one person and fuses them together
+- Bot calculates empty time slots for possible group meetings given specific parameters 
+- Usable via simple telegram commands
+- Sends Funny Memes 
 
-### Graph drawing tool
-https://pityka.github.io/nspl/
+
+###User use case example:
+Käyttäjä lähettää oman kalenterinsa botille yksityisviestillä. Botti vertailee ryhmän käyttäjien kalentereita ja tulostaa ryhmään kaikki mahdolliset okkousajat.
+
+- Everybody greets the bot with /start -command in group
+- Users send .ics files to bot through private messages
+- Users use /file command to see if the bot has recieved their files
+- One of the users in the group sends /when \<day limit>,\<duration>
+- Bot replies with available time slots
