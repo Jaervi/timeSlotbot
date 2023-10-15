@@ -29,9 +29,10 @@ object YourBot extends App:
         onUserExist(handleGroupMemberChanges)
 
 
+
         def when(msg: Message) =
 
-            println("ollaan ttäälllä")
+            //println("ollaan ttäälllä")
             var userBufer = usersInGroups(getChatId(msg))
             var slotBuffer = Calendar(FileHandler.eventsFromICSFile(FilePreprocessor.getFile(userBufer(0)).get), java.util.Calendar.getInstance().getTimeInMillis/1000)
             //var slotBuffer = Calendar(Buffer[CalendarEvent](), java.util.Calendar.getInstance().getTimeInMillis/1000)
@@ -39,7 +40,7 @@ object YourBot extends App:
             println(viesti)
             var endTime = viesti.split(",")(0).toInt
             var duration = viesti.split(",")(1).toInt
-            println(s"endtime: $endTime, duration: $duration")
+            //println(s"endtime: $endTime, duration: $duration")
             var muuttuja1 : File = null
             writeMessage(s"End time set as: ${endTime} duration set as: ${duration}",getChatId(msg))
             for id <- userBufer do
@@ -77,7 +78,6 @@ object YourBot extends App:
          * @return Answering message about how many files were successfully read and also a meme
          */
         def printfile(msg: Message): String =
-
             var userid: Long = 0
             msg.from match
                 case Some(user) => userid = user.id
