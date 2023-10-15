@@ -159,13 +159,12 @@ object YourBot extends App:
 
 
         def help(s: Message) =
-            "I'm a bot that helps you manage meeting times with your friends.\n " +
+            "I'm a bot that helps you manage meeting times with your friends.\n" +
               "Greet the bot with command /start \n" +
-              "Here are the commands: \n " +
-              "/when - Use this command AFTER everybody has sent their calendar to the bot. example use: /when 14,30 find possible 30min meeting times for the next 14 days\n" +
-              "/help - takes you here \n" +
-              "/file -Just send your calendar as a .ics file to the bot privately then run this message to check that the file has been sent. Note that the file can only be sent to the bot by direct messages\n"
-
+              "Here are the commands: \n" +
+              " /when - Use this command AFTER everybody has sent their calendar to the bot. example use: /when 14,30 find possible 30min meeting times for the next 14 days\n" +
+              " /help - takes you here \n" +
+              " /file -Just send your calendar as a .ics file to the bot privately then run this message to check that the file has been sent. Note that the file can only be sent to the bot by direct messages\n"
 
 
         this.run()
