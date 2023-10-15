@@ -31,12 +31,19 @@ object YourBot extends App:
          * @param msg message
          * @return string that gets sent back as message, list of all possible timeslots
          */
-        def when(msg: Message) =
+        def when(msg: Message): String =
             var userBufer = usersInGroups(getChatId(msg))
             var slotBuffer = Calendar(FileHandler.eventsFromICSFile(FilePreprocessor.getFile(userBufer(0)).get), java.util.Calendar.getInstance().getTimeInMillis/1000)
             var viesti = getString(msg)
-            var endTime = viesti.split(",")(0).toInt
-            var duration = viesti.split(",")(1).toInt
+            var endTime: Int = 0
+            var duration: Int = 0
+            // Error handling
+            try
+                endTime = viesti.split(",")(0).toInt
+                duration = viesti.split(",")(1).toInt
+            catch
+                case error: Exception => return "Couldn't process the command using these parameters. Please try again.\nUsage: /when <days>,<duration>"
+
             var muuttuja1 : File = null
             writeMessage(s"End time set as: ${endTime} duration set as: ${duration}",getChatId(msg))
             for id <- userBufer do
