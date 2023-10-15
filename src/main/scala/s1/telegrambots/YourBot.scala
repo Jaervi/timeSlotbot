@@ -22,7 +22,7 @@ object YourBot extends App:
         onUserCommand("help", help)
         //onUserCommand("When", )
         onUserCommand("When", when)
-
+        onUserCommand("file", printfile)
 
 
         def when(msg: Message) =
@@ -61,13 +61,12 @@ object YourBot extends App:
                     //val cal = Calendar(FileHandler.eventsFromICSFile(file), 1)
                     //cal.sortEventsByStartTime()
                     //cal.printList()
-                    sendPhoto("nicefile.png", getChatId(msg))
+                    //sendPhoto("nicefile.png", getChatId(msg))
                     "yes file :)"
                 case None =>
-                    sendPhoto("nofiles .jpg", getChatId(msg))
+                    //sendPhoto("nofiles .jpg", getChatId(msg))
                     "No files were "
 
-        this.onUserCommand("file", printfile)
 
         def addUserToGroupBuffer(userid: Long, groupid: Long) =
             if (usersInGroups.contains(groupid)) then
