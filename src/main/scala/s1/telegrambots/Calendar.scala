@@ -7,14 +7,13 @@ import java.time.LocalDate
 import scala.collection.mutable.Buffer
 import java.time.ZonedDateTime
 
-// TODO: Make code clearer and improve commenting.
-
 /**
  * Represents a calendar, storing data about events. Mainly used as an interface to perform operations between different event lists.
  * @param events A Buffer containing events to be included in this calendar. The buffer is saved as a var-variable since you can add events manually afterwards.
- * @param timeCreated A simple number used for determining which of two calendars is newer or removing old calendars after a certain time period.
+ * @param timeCreated A simple number used for determining which of two calendars is newer or removing old calendars after a certain time period (not yet implemented).
  */
 class Calendar(events:Buffer[CalendarEvent], val timeCreated:Long):
+
 
   var eventList=events
   filterForCurrentTime()
@@ -22,8 +21,7 @@ class Calendar(events:Buffer[CalendarEvent], val timeCreated:Long):
   removeDayEvents()
 
   /**
-   * A simple method for getting the current time in minutes (since year 0).
-   *
+   * A simple method for getting the current time in minutes (since year 0)
    * @return The current time in minutes as Int
    */
   private def currentTimeInMinutes: Int = {
@@ -54,7 +52,8 @@ class Calendar(events:Buffer[CalendarEvent], val timeCreated:Long):
     eventList=tempBuffer
 
   /**Prints the entire event list*/
-  def printList()=//eventList.foreach(println)
+  def printList()=
+    //eventList.foreach(println)
     for i <- eventList.indices do
       println(eventList(i).toString)
 
@@ -62,27 +61,6 @@ class Calendar(events:Buffer[CalendarEvent], val timeCreated:Long):
   def fuseTwoCalendars(calendar:Calendar):Calendar=
     var combinedBuffer=(calendar.eventList ++ (this.eventList)).sortBy(_.startTimeInMinutes)
     Calendar(combinedBuffer,timeCreated)
-    /*var endSortedCombinedBuffer=(fuseBuffer ++ (this.eventList)).sortBy(_.endTimeInMinutes)
-    var newEventBuffer=Buffer[CalendarEvent]()
-    eventList.foreach(e=>fuseBuffer.filter(!e.covers(_)))
-    fuseBuffer.foreach(fe=>eventList.filter(!fe.covers(_)))
-    for event <- this.eventList do
-      if combinedBuffer.forall(e=>e.startTimeInMinutes>=event.endTimeInMinutes || e.endTimeInMinutes<=event.startTimeInMinutes) then
-        newEventBuffer.append(event)
-    for fuseEvent <- fuseBuffer do
-      if combinedBuffer.forall(e=>e.startTimeInMinutes>=fuseEvent.endTimeInMinutes || e.endTimeInMinutes<=fuseEvent.startTimeInMinutes) then
-        newEventBuffer.append(fuseEvent)
-    for event <- this.eventList do
-      var baseEvent=event
-      for fuseEvent <- combinedBuffer do
-        if fuseEvent.startsEarlierThan(baseEvent) && fuseEvent.endsDuring(baseEvent) then
-          baseEvent.startTime=fuseEvent.startTime
-      for fuseEvent <-endSortedCombinedBuffer do
-        if fuseEvent.endsLaterThan(baseEvent)&& fuseEvent.startsDuring(baseEvent) then
-          baseEvent.endTime=fuseEvent.endTime
-      if newEventBuffer.forall(!baseEvent.existsDuring(_)) then
-        newEventBuffer.append(baseEvent)
-    Calendar(newEventBuffer,timeCreated)*/
 
   /**
    * Calculates all the empty time slots from the specified calendar.
@@ -125,13 +103,13 @@ class Calendar(events:Buffer[CalendarEvent], val timeCreated:Long):
     val offset = ZonedDateTime.now().getOffset.getTotalSeconds/3600
     var morningString=(morningLimit-offset).toString
     var eveningString=(eveningLimit-offset).toString
+    val format = SimpleDateFormat("yyyyMMdd")
+    val calendar = java.util.Calendar.getInstance()
+    calendar.setTime(format.parse(s"${LocalDate.now().getYear.toString}${LocalDate.now().getMonthValue.toString}${LocalDate.now().getDayOfMonth.toString}"))
     if morningLimit<13 then
       morningString="0"+morningString
     if eveningLimit<13 then
       eveningString="0"+eveningString
-    val format = SimpleDateFormat("yyyyMMdd")
-    val calendar = java.util.Calendar.getInstance()
-    calendar.setTime(format.parse(s"${LocalDate.now().getYear.toString}${LocalDate.now().getMonthValue.toString}${LocalDate.now().getDayOfMonth.toString}"))
     for i <- 0 until days do
       val start=s"${format.format(calendar.getTime)}${eveningString}00"
       calendar.add(java.util.Calendar.DAY_OF_MONTH,1)

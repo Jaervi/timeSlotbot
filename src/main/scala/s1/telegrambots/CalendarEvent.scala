@@ -4,11 +4,10 @@ import java.text.SimpleDateFormat
 import java.time.*
 
 /*
+Examples of lines including the date strings 
 DTSTART:20180816T080000Z
 DTEND:20180816T090000Z
- */
-
-// TODO: Make code clearer and improve commenting.
+*/
 
 /**
  * Represents a single event with a starting time and an ending time.
@@ -27,7 +26,11 @@ class CalendarEvent (var startTime:String,var endTime:String):
   def endTimeInMinutes: Int=
     endYear*525600+endMonth*43200+endDay*1440+endHour*60+endMinute
 
-
+  /**
+   * Given a date in String format, determines if Daylight Savings Time is active on the specified date (in Helsinki)
+   * @param eventDate A date in format yyyyMMdd as a String
+   * @return True/false depending on the date
+   */
   def isSummerTime(eventDate:String):Boolean=
     val format = SimpleDateFormat("yyyyMMdd")
     val date=format.parse(eventDate.substring(0,8))
@@ -50,7 +53,7 @@ class CalendarEvent (var startTime:String,var endTime:String):
     else
       0
   def startMinute:Int=if startTime.length>10 then startTime.substring(11,13).toInt else 0
-  
+
   def endYear:Int=endTime.substring(0,4).toInt
   def endMonth:Int=endTime.substring(4,6).toInt
   def endDay:Int=endTime.substring(6,8).toInt
