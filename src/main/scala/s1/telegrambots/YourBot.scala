@@ -15,8 +15,7 @@ import java.util.concurrent.TimeUnit
 object YourBot extends App:
     object Bot extends BasicBot:
 
-        var usersInGroups = new HashMap[Long,Buffer[Long]]()
-        var isWaitingForMessage = false
+        private var usersInGroups = new HashMap[Long,Buffer[Long]]()
 
         this.onUserMessage(FilePreprocessor.parseFilepathsFromMessage)
         onUserCommand("help", help)
@@ -84,6 +83,7 @@ object YourBot extends App:
                     if (FilePreprocessor.getLog < 100000) then
                         s"${FilePreprocessor.getLog} calendars successfully processed"
                     else
+                        // Calculate the age of earlier file
                         var ageInHours: Double = (java.util.Calendar.getInstance().getTimeInMillis - FilePreprocessor.getLog) / 3600000.0
                         var ageInDays: Int = Math.floor(ageInHours / 24.0).toInt
                         ageInHours = Math.floor(ageInHours % 24)
@@ -145,6 +145,11 @@ object YourBot extends App:
                 case None =>
         end handleGroupMemberChanges
 
+        /**
+         * Function that gets called on /help command
+         * @param s message
+         * @return help message
+         */
         def help(s: Message) =
             "I'm a bot that helps you manage meeting times with your friends.\n " +
               "Greet the bot with command /start \n" +
@@ -152,6 +157,7 @@ object YourBot extends App:
               "/when - Use this command AFTER everybody has sent their calendar to the bot. example use: /when 14,30 find possible 30min meeting times for the next 14 days\n" +
               "/help - takes you here \n" +
               "/file -Just send your calendar as a .ics file to the bot privately then run this message to check that the file has been sent. Note that the file can only be sent to the bot by direct messages\n"
+        end help
 
 
 
