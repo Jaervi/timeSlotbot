@@ -1,15 +1,18 @@
 # timeSlotbot
 
+### Short overview
+timeSlotbot is a telegram bot designed to make comparing calendars and free timeslots between people easier. The bot works with .ics files, a common calendar format, and sends a textual message with the desired information.
+
 ### Functionalities
 - Ability to send calendar ics -file to bot
 - Bot processes and handles ics files
 - Bot handles multiple calendars sent by one person and fuses them together
 - Bot calculates empty time slots for possible group meetings given specific parameters 
 - Usable via simple telegram commands
-- Sends Funny Memes 
+- Sends Funny Memes
 
 
-### User use case example:
+### User use case example
 Käyttäjä lähettää oman kalenterinsa botille yksityisviestillä. Botti vertailee ryhmän käyttäjien kalentereita ja tulostaa ryhmään kaikki mahdolliset okkousajat.
 
 - Everybody greets the bot with /start -command in group
