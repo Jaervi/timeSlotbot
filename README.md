@@ -23,4 +23,4 @@ The user sends their calendar to the bot via a private message. The bot compares
 
 
 ### Notice
-You need to run the program with administrator privilages
+You need to run the program with administrator privileges
